@@ -123,6 +123,9 @@ def main():
     # --- Determine recent gameweeks and fetch ALL recent matches (finished and not finished) ---
     start_gameweek = get_latest_finished_gameweek()
     matches_df = fetch_data_since_gameweek('matches', start_gameweek)
+    
+    # NEW: Remove unwanted columns right after fetching
+    matches_df = matches_df.drop(columns=['match_url', 'fotmob_id'], errors='ignore')
 
     # Exit early if there are no matches at all to process.
     if matches_df.empty:
