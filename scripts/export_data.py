@@ -10,7 +10,8 @@ SEASON = "2025-2026"
 TOURNAMENT_NAME_MAP = {
     'friendly': 'Friendlies',
     'premier-league': 'Premier League',
-    'champions-league': 'Champions League'
+    'champions-league': 'Champions League',
+    'prem': 'Premier League'
 }
 
 # --- Setup: Load Environment Variables and Connect to Supabase ---
