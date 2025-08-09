@@ -1,4 +1,4 @@
-# FPL-Elo-Insights: (edición A)
+# FPL-Elo-Insights: (edición final resuelta)
 # FPL-Elo-Insights: A Comprehensive FPL Dataset 
 
 Welcome to FPL-Elo-Insights, a meticulously curated dataset designed to empower your Fantasy Premier League analysis beyond the surface. This project uniquely links official FPL player data with detailed match statistics and historical team Elo ratings, allowing for unparalleled insights.
