@@ -285,4 +285,3 @@ This table contains information about each team from the FPL API.
 
 **Links:**
 *   `id` links to `home_team` and `away_team` in the `matches` and `fixtures` tables.
-Este texto es un error
