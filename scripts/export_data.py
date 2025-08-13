@@ -12,7 +12,8 @@ TOURNAMENT_NAME_MAP = {
     'premier-league': 'Premier League',
     'champions-league': 'Champions League',
     'prem': 'Premier League',
-    'community-shield': 'Community Shield'
+    'community-shield': 'Community Shield',
+    'uefa-super-cup' : 'Uefa Super Cup'
 }
 
 # --- Setup: Load Environment Variables and Connect to Supabase ---
