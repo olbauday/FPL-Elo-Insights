@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captaincy Showdown - Enhanced UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1F4B59 0%, #211F29 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6A4D, #F2C572);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #B0BEC5;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 106, 77, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 106, 77, 0.2);
+            border-color: #FF6A4D;
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: #FF6A4D;
+            border-color: #FF6A4D;
+        }
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .player-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FF6A4D, #F2C572);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .player-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .team-badge {
+            width: 24px;
+            height: 24px;
+            background: #02EBAE;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #211F29;
+        }
+
+        .position-badge {
+            background: rgba(242, 197, 114, 0.2);
+            color: #F2C572;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .captain-score {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #02EBAE, #F2C572);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(2, 235, 174, 0.3);
+            line-height: 1;
+        }
+
+        .score-label {
+            color: #B0BEC5;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .metric-label {
+            color: #B0BEC5;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .form-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .form-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6A4D, #02EBAE);
+            transition: width 0.3s ease;
+        }
+
+        .fixture-difficulty {
+            display: flex;
+            gap: 3px;
+            margin-top: 8px;
+        }
+
+        .difficulty-star {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .difficulty-star.filled {
+            background: #FF6A4D;
+        }
+
+        .risk-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .risk-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .risk-low { background: #02EBAE; }
+        .risk-medium { background: #F2C572; }
+        .risk-high { background: #FF6A4D; }
+
+        .ownership-comparison {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .ownership-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .ownership-fill {
+            height: 100%;
+            background: #02EBAE;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .floating-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-chip {
+            background: rgba(2, 235, 174, 0.2);
+            color: #02EBAE;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .candidates-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .score-value {
+                font-size: 2.5rem;
+            }
+            
+            .controls {
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .control-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .comparison-mode {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 106, 77, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .comparison-mode:hover {
+            background: #FF6A4D;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Captaincy Showdown</h1>
+        <p>GW5 Captain Candidates • Last Updated: 2 hours ago</p>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn active">All</button>
+        <button class="control-btn">Forwards</button>
+        <button class="control-btn">Midfielders</button>
+        <button class="control-btn">Defenders</button>
+        <button class="control-btn">Sort by Score</button>
+        <button class="control-btn">Sort by Price</button>
+    </div>
+
+    <button class="comparison-mode">Compare Mode</button>
+
+    <div class="candidates-grid">
+        <!-- Player 1: Haaland -->
+        <div class="player-card">
+            <div class="floating-stats">
+                <div class="stat-chip">TOP PICK</div>
+            </div>
+            
+            <div class="card-header">
+                <div class="player-name">Haaland</div>
+            </div>
+            
+            <div class="team-info">
+                <div class="team-badge">MCI</div>
+                <div class="position-badge">Forward</div>
+            </div>
+
+            <div class="captain-score">
+                <div class="score-value">83.8</div>
+                <div class="score-label">Captain Score</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Price</div>
+                    <div class="metric-value">£15.3m</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Ownership</div>
+                    <div class="metric-value">71.3%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Form</div>
+                    <div class="metric-value">14.0</div>
+                    <div class="form-bar">
+                        <div class="form-fill" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fixture</div>
+                    <div class="metric-value">vs BRE (H)</div>
+                    <div class="fixture-difficulty">
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">xGI/90</div>
+                    <div class="metric-value">1.18</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minutes Risk</div>
+                    <div class="metric-value">0%</div>
+                    <div class="risk-indicator">
+                        <div class="risk-dot risk-low"></div>
+                        <span style="font-size: 0.8rem; color: #02EBAE;">Low Risk</span>
+                    </div>
+                </div>
+                <div class="ownership-comparison">
+                    <div class="metric-label">Ownership vs Expected</div>
+                    <div class="ownership-bar">
+                        <div class="ownership-fill" style="width: 71%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player 2: Luis Diaz -->
+        <div class="player-card">
+            <div class="floating-stats">
+                <div class="stat-chip">DIFFERENTIAL</div>
+            </div>
+            
+            <div class="card-header">
+                <div class="player-name">Luis Díaz</div>
+            </div>
+            
+            <div class="team-info">
+                <div class="team-badge">LIV</div>
+                <div class="position-badge">Midfielder</div>
+            </div>
+
+            <div class="captain-score">
+                <div class="score-value">74.3</div>
+                <div class="score-label">Captain Score</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Price</div>
+                    <div class="metric-value">£7.9m</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Ownership</div>
+                    <div class="metric-value">29.1%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Form</div>
+                    <div class="metric-value">12.0</div>
+                    <div class="form-bar">
+                        <div class="form-fill" style="width: 80%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fixture</div>
+                    <div class="metric-value">vs BOU (H)</div>
+                    <div class="fixture-difficulty">
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star"></div>
+                        <div class="difficulty-star"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">xGI/90</div>
+                    <div class="metric-value">0.83</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minutes Risk</div>
+                    <div class="metric-value">100%</div>
+                    <div class="risk-indicator">
+                        <div class="risk-dot risk-high"></div>
+                        <span style="font-size: 0.8rem; color: #FF6A4D;">High Risk</span>
+                    </div>
+                </div>
+                <div class="ownership-comparison">
+                    <div class="metric-label">Ownership vs Expected</div>
+                    <div class="ownership-bar">
+                        <div class="ownership-fill" style="width: 29%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player 3: Palmer -->
+        <div class="player-card">
+            <div class="card-header">
+                <div class="player-name">Palmer</div>
+            </div>
+            
+            <div class="team-info">
+                <div class="team-badge">CHE</div>
+                <div class="position-badge">Midfielder</div>
+            </div>
+
+            <div class="captain-score">
+                <div class="score-value">67.1</div>
+                <div class="score-label">Captain Score</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Price</div>
+                    <div class="metric-value">£10.6m</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Ownership</div>
+                    <div class="metric-value">39.7%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Form</div>
+                    <div class="metric-value">8.5</div>
+                    <div class="form-bar">
+                        <div class="form-fill" style="width: 57%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fixture</div>
+                    <div class="metric-value">vs WHU (A)</div>
+                    <div class="fixture-difficulty">
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star"></div>
+                        <div class="difficulty-star"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">xGI/90</div>
+                    <div class="metric-value">0.51</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minutes Risk</div>
+                    <div class="metric-value">0%</div>
+                    <div class="risk-indicator">
+                        <div class="risk-dot risk-low"></div>
+                        <span style="font-size: 0.8rem; color: #02EBAE;">Low Risk</span>
+                    </div>
+                </div>
+                <div class="ownership-comparison">
+                    <div class="metric-label">Ownership vs Expected</div>
+                    <div class="ownership-bar">
+                        <div class="ownership-fill" style="width: 40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player 4: Watkins -->
+        <div class="player-card">            
+            <div class="card-header">
+                <div class="player-name">Watkins</div>
+            </div>
+            
+            <div class="team-info">
+                <div class="team-badge">AVL</div>
+                <div class="position-badge">Forward</div>
+            </div>
+
+            <div class="captain-score">
+                <div class="score-value">62.2</div>
+                <div class="score-label">Captain Score</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Price</div>
+                    <div class="metric-value">£9.0m</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Ownership</div>
+                    <div class="metric-value">28.8%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Form</div>
+                    <div class="metric-value">6.5</div>
+                    <div class="form-bar">
+                        <div class="form-fill" style="width: 43%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fixture</div>
+                    <div class="metric-value">vs EVE (H)</div>
+                    <div class="fixture-difficulty">
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star"></div>
+                        <div class="difficulty-star"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">xGI/90</div>
+                    <div class="metric-value">0.82</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minutes Risk</div>
+                    <div class="metric-value">0%</div>
+                    <div class="risk-indicator">
+                        <div class="risk-dot risk-low"></div>
+                        <span style="font-size: 0.8rem; color: #02EBAE;">Low Risk</span>
+                    </div>
+                </div>
+                <div class="ownership-comparison">
+                    <div class="metric-label">Ownership vs Expected</div>
+                    <div class="ownership-bar">
+                        <div class="ownership-fill" style="width: 29%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player 5: M.Salah -->
+        <div class="player-card">
+            <div class="floating-stats">
+                <div class="stat-chip">TEMPLATE</div>
+            </div>
+            
+            <div class="card-header">
+                <div class="player-name">M.Salah</div>
+            </div>
+            
+            <div class="team-info">
+                <div class="team-badge">LIV</div>
+                <div class="position-badge">Midfielder</div>
+            </div>
+
+            <div class="captain-score">
+                <div class="score-value">60.9</div>
+                <div class="score-label">Captain Score</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Price</div>
+                    <div class="metric-value">£12.8m</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Ownership</div>
+                    <div class="metric-value">46.2%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Form</div>
+                    <div class="metric-value">8.8</div>
+                    <div class="form-bar">
+                        <div class="form-fill" style="width: 59%"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Fixture</div>
+                    <div class="metric-value">vs BOU (H)</div>
+                    <div class="fixture-difficulty">
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star filled"></div>
+                        <div class="difficulty-star"></div>
+                        <div class="difficulty-star"></div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">xGI/90</div>
+                    <div class="metric-value">0.77</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Minutes Risk</div>
+                    <div class="metric-value">100%</div>
+                    <div class="risk-indicator">
+                        <div class="risk-dot risk-high"></div>
+                        <span style="font-size: 0.8rem; color: #FF6A4D;">High Risk</span>
+                    </div>
+                </div>
+                <div class="ownership-comparison">
+                    <div class="metric-label">Ownership vs Expected</div>
+                    <div class="ownership-bar">
+                        <div class="ownership-fill" style="width: 46%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive functionality
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('.control-btn.active').classList.remove('active');
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.player-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Add selection logic here
+                this.style.transform = this.style.transform ? '' : 'scale(1.02)';
+                this.style.borderColor = this.style.borderColor === 'rgb(255, 106, 77)' ? '' : '#FF6A4D';
+            });
+        });
+
+        // Simulate live data updates
+        setInterval(() => {
+            const timestamp = document.querySelector('.header p');
+            const now = new Date();
+            timestamp.textContent = `GW5 Captain Candidates • Last Updated: ${now.toLocaleTimeString()}`;
+        }, 30000);
+    </script>
+</body>
+</html>
