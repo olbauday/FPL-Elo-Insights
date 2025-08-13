@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Global base styles to match the mockup */
 html, body, #root { height: 100%; }
