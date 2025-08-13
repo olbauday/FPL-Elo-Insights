@@ -203,7 +203,7 @@ export default function App() {
 
       <button className="fixed top-5 right-5 bg-[rgba(255,106,77,0.9)] hover:bg-[#FF6A4D] text-white px-5 py-3 rounded-full font-semibold backdrop-blur-lg transition-all hover:scale-105">Compare Mode</button>
 
-      <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', maxWidth: 1400, margin: '0 auto' }}>
+  <div className="grid gap-5 max-w-[1600px] mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {players.map(p => (
           <PlayerCard key={p.id} p={p} />
         ))}
