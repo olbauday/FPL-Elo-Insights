@@ -1,69 +1,46 @@
-# React + TypeScript + Vite
+# Captaincy UI (React + TypeScript + Tailwind + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pixel-accurate implementation of the Captaincy Showdown mockup using React, TypeScript and Tailwind CSS.
 
-Currently, two official plugins are available:
+## What’s included
+- Vite React + TS scaffold in `captaincy-ui/`
+- Tailwind CSS v3 configured via PostCSS
+- Exact UI components and styles matching the mockup
+- Mock data for players (Haaland, Luis Díaz, Palmer, Watkins, M.Salah)
+- Responsive grid and interactive controls (filters, sort, compare mode pill)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Run locally
+1. Install dependencies
+  - From repo root:
+    - `cd captaincy-ui`
+    - `npm install`
+2. Start dev server
+  - `npm run dev`
+  - Open http://localhost:5173/
+3. Build
+  - `npm run build`
 
-## Expanding the ESLint configuration
+## Key files
+- `src/App.tsx`: Main UI with Header, Controls, Player Cards, and mock data.
+- `src/index.css`: Tailwind directives and base global styles (gradient background, Inter font).
+- `tailwind.config.cjs`: Tailwind content globs.
+- `postcss.config.cjs`: PostCSS plugins (Tailwind, Autoprefixer).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Fixes applied during setup
+Tailwind utilities initially didn’t render, causing unstyled content. Applied fixes:
+1. Configured Tailwind v3 with PostCSS:
+  - Added `tailwind.config.cjs` and `postcss.config.cjs` (CommonJS to work with `type: module`).
+  - Replaced `@import "tailwindcss";` with Tailwind v3 directives in `src/index.css`:
+    - `@tailwind base; @tailwind components; @tailwind utilities;`
+2. Removed ESM `postcss.config.js` to avoid Vite PostCSS loading error; kept `postcss.config.cjs` only.
+3. Verified build and dev server run after configuration.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Notes
+- The UI uses Tailwind utilities and a few inline gradients to exactly match the mockup.
+- Timestamp updates every ~30 seconds.
+- Clicking a card slightly scales it and highlights the border to indicate selection.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Next steps
+- Split UI into smaller components (`Header`, `Controls`, `PlayerCard`).
+- Add a Tailwind theme extension for brand colors (gradients, chips) if desired.
+- Wire in real data per development plan.
