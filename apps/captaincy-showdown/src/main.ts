@@ -1,8 +1,3 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './components/App'
-
-const root = createRoot(document.getElementById('app')!)
-root.render(
-  React.createElement(React.StrictMode, {}, React.createElement(App))
-)
+// This file intentionally left minimal to avoid duplicate React entrypoints.
+// Use main.tsx as the application entry.
+export {};
