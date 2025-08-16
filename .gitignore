@@ -174,3 +174,10 @@ cython_debug/
 node_modules/
 .DS_Store
 
+node_modules/
+dist/
+.vite/
+apps/captaincy-showdown/.vite/
+apps/captaincy-ui/.vite/
+apps/captaincy-showdown/temp-tests/
+apps/captaincy-showdown/src/test/
