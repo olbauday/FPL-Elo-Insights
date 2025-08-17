@@ -34,7 +34,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
     
     // Responsive horizontal layout
     return `
-      flex flex-col lg:flex-row 
+  flex flex-col lg:flex-row lg:flex-wrap
       space-y-4 lg:space-y-0 lg:space-x-4 
       items-center lg:items-stretch
     `;
@@ -146,7 +146,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
       {/* Comparison Summary (optional) */}
       {candidateA && candidateB && (
-        <div className="w-full mt-6 lg:mt-8">
+        <div className="w-full lg:basis-full mt-6 lg:mt-8">
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
               Quick Comparison
