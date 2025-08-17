@@ -2,6 +2,7 @@ import React from 'react';
 import type { CaptainCandidate } from '../types';
 import PlayerCard from './PlayerCard';
 import VersusIndicator from './VersusIndicator';
+import ScoreDeltaBadge from './ScoreDeltaBadge';
 
 interface ComparisonViewProps {
   candidateA: CaptainCandidate | null;
@@ -45,9 +46,9 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
   const getVersusContainerClasses = (): string => {
     if (layout === 'vertical') {
-      return 'flex justify-center py-2';
+      return 'flex flex-col items-center justify-center gap-2 py-2';
     }
-    return 'flex items-center justify-center lg:px-4';
+    return 'flex flex-col lg:flex-col items-center justify-center gap-2 lg:px-4';
   };
 
   // Placeholder component for empty slots
@@ -122,9 +123,10 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
         )}
       </div>
 
-      {/* Versus Indicator */}
+      {/* Versus Indicator + optional delta badge */}
       <div className={getVersusContainerClasses()}>
         <VersusIndicator size={size} />
+        <ScoreDeltaBadge a={candidateA ?? undefined} b={candidateB ?? undefined} size={size} />
       </div>
 
       {/* Player B */}
