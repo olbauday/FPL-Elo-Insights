@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
 import EnhancedApp from '../components/EnhancedApp';
 import type { CaptainCandidate } from '../types';
@@ -20,7 +21,7 @@ const mk = (over: Partial<CaptainCandidate> = {}): CaptainCandidate => ({
 });
 
 describe('EnhancedApp compare flow', () => {
-  test('enables compare mode, selects players, and shows comparison at 2 selections (capped at 2)', async () => {
+  test('enables compare mode, selects players, and filters grid to selected (capped at 2)', async () => {
     const players: CaptainCandidate[] = [
       mk({ player_id: 1, name: 'Alpha' }),
       mk({ player_id: 2, name: 'Bravo', captain_score: 79.5 }),
@@ -39,13 +40,14 @@ describe('EnhancedApp compare flow', () => {
     fireEvent.click(screen.getByText('Bravo'));
   expect(screen.getByText(/2\/2 selected/i)).toBeInTheDocument();
 
-    // ComparisonView should appear when exactly two are selected
-    expect(screen.getByRole('region', { name: /captain candidate comparison/i })).toBeInTheDocument();
+  // The grid should now show only the two selected players
+  expect(screen.getByText('Alpha')).toBeInTheDocument();
+  expect(screen.getByText('Bravo')).toBeInTheDocument();
+  expect(screen.queryByText('Charlie')).not.toBeInTheDocument();
 
-  // Attempt to select a third player should have no effect due to 2-cap
-  fireEvent.click(screen.getByText('Charlie'));
+  // A third option is hidden when two are selected; selection remains capped at 2
   expect(screen.getByText(/2\/2 selected/i)).toBeInTheDocument();
-  // Comparison section should remain visible
-  expect(screen.getByRole('region', { name: /captain candidate comparison/i })).toBeInTheDocument();
+  expect(screen.getByText('Alpha')).toBeInTheDocument();
+  expect(screen.getByText('Bravo')).toBeInTheDocument();
   });
 });

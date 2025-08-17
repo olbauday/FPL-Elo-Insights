@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { EnhancedPlayerCard } from './EnhancedPlayerCard';
-import ComparisonView from './ComparisonView';
 import type { CaptainCandidate } from '../types';
 import { getCaptainCandidates } from '../services/captaincyDataService';
 
@@ -158,29 +157,12 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
         </div>
       )}
 
-      {/* When exactly two selected, show ComparisonView */}
-      {isCompareMode && selectedPlayers.size === 2 && (
-        <div className="max-w-6xl mx-auto mb-8">
-          {(() => {
-            const ids = Array.from(selectedPlayers.values());
-            const all = (players && players.length > 0) ? players : loadedPlayers;
-            const a = all.find(p => p.player_id === ids[0]) || null;
-            const b = all.find(p => p.player_id === ids[1]) || null;
-            if (!a || !b) return null;
-            return (
-              <ComparisonView
-                candidateA={a}
-                candidateB={b}
-                size="small"
-                layout="horizontal"
-              />
-            );
-          })()}
-        </div>
-      )}
-
+      {/* Cards grid; show all until 2 selected, then filter to the selected pair */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-        {filteredAndSortedPlayers.map((player) => (
+        {(isCompareMode && selectedPlayers.size === 2
+          ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
+          : filteredAndSortedPlayers
+        ).map((player) => (
           <EnhancedPlayerCard
             key={player.player_id}
             player={player}
