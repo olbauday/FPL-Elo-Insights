@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { EnhancedPlayerCard } from './EnhancedPlayerCard';
+import ComparisonView from './ComparisonView';
 import type { CaptainCandidate } from '../types';
 import { getCaptainCandidates } from '../services/captaincyDataService';
 
@@ -154,6 +155,27 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               Click up to 3 players to compare • {selectedPlayers.size}/3 selected
             </span>
           </div>
+        </div>
+      )}
+
+      {/* When exactly two selected, show ComparisonView */}
+      {isCompareMode && selectedPlayers.size === 2 && (
+        <div className="max-w-6xl mx-auto mb-8">
+          {(() => {
+            const ids = Array.from(selectedPlayers.values());
+            const all = (players && players.length > 0) ? players : loadedPlayers;
+            const a = all.find(p => p.player_id === ids[0]) || null;
+            const b = all.find(p => p.player_id === ids[1]) || null;
+            if (!a || !b) return null;
+            return (
+              <ComparisonView
+                candidateA={a}
+                candidateB={b}
+                size="medium"
+                layout="horizontal"
+              />
+            );
+          })()}
         </div>
       )}
 
