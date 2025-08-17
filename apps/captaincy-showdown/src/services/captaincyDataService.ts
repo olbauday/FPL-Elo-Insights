@@ -50,14 +50,14 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
     
     // Join the data
     const enrichedPlayerStats = gwPlayerStats.map((stats: any) => {
-      const player = players.find((p: any) => p.player_id === stats.id);
-      const team = teams.find((t: any) => Number(t.code) === Number(player?.team_code));
+      const player = players.find((p: any) => p.player_id === stats.id || Number(p.id) === Number(stats.id));
+      const team = teams.find((t: any) => Number(t.code) === Number(player?.team_code) || Number(t.id) === Number(player?.team_id));
       
       return {
         ...stats,
-        web_name: player?.web_name || 'Unknown',
-        team: team?.short_name || 'Unknown',
-        position: player?.position || 'Unknown',
+  web_name: player?.web_name ?? player?.name ?? 'Unknown',
+  team: team?.short_name ?? team?.name ?? 'Unknown',
+  position: player?.position ?? player?.element_type ?? 'Unknown',
         fixture_difficulty: getFixtureDifficulty(player?.team_code) // Calculate real fixture difficulty
       };
     });
@@ -100,4 +100,15 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
     // Return empty array on error
     return [];
   }
+}
+
+/**
+ * Returns top N captain candidates for a given GW and season.
+ * Provides a reusable API for quick-select and other UI elements.
+ */
+export async function getTopCandidates(n: number, gameweek: number, season: string = '2025-2026') {
+  const candidates = await getCaptainCandidates(gameweek, season);
+  if (!Array.isArray(candidates) || candidates.length === 0) return [];
+  const topN = Math.max(0, Math.min(n, candidates.length));
+  return candidates.slice(0, topN);
 }

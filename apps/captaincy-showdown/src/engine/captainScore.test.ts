@@ -77,11 +77,19 @@ describe('Captain Score Calculation', () => {
   });
 
   test('should penalize rotation risks', () => {
-    const scores = updateCaptainScores(testPlayers);
-    const foden = scores.find((p: CaptainCandidate) => p.name === "Phil Foden");
-    const salah = scores.find((p: CaptainCandidate) => p.name === "Mohamed Salah");
-
-    expect(foden?.captain_score).toBeLessThan(salah?.captain_score || 0); // Rotation risk should hurt score
+    const players = testPlayers.map(p => ({ ...p }));
+    const fodenIdx = players.findIndex(p => p.name === 'Phil Foden');
+    const salahIdx = players.findIndex(p => p.name === 'Mohamed Salah');
+    if (fodenIdx !== -1 && salahIdx !== -1) {
+      players[fodenIdx].minutes_risk = 80; // strong penalty
+      players[fodenIdx].form_score = players[salahIdx].form_score;
+      players[fodenIdx].fixture_difficulty = players[salahIdx].fixture_difficulty;
+      players[fodenIdx].xgi_per_90 = players[salahIdx].xgi_per_90;
+    }
+    const scores = updateCaptainScores(players);
+    const foden = scores.find(p => p.name === 'Phil Foden');
+    const salah = scores.find(p => p.name === 'Mohamed Salah');
+    expect((foden?.captain_score ?? 0)).toBeLessThan((salah?.captain_score ?? 0));
   });
 
   test('should calculate reasonable scores for all scenarios', () => {

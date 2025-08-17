@@ -17,24 +17,48 @@ function normalizePosition(pos: any, elementType?: any): 'GKP'|'DEF'|'MID'|'FWD'
 }
 
 export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[] {
-  return rawPlayerStats.map((row) => {
-    // Only skip if essential IDs are missing - 0 values are valid for stats
-    if (!row.id || row.form === undefined || row.expected_goal_involvements_per_90 === undefined) {
-      return null;
-    }
-    return {
-      player_id: Number(row.id),
-      name: row.web_name,
-      team: row.team, // Join with teams.csv if needed for full name
-      position: normalizePosition(row.position),
-      price: Number(row.now_cost), // FPL prices are already in correct format (4.0-14.5)
-      ownership: Number(row.selected_by_percent),
-      expected_ownership: Number(row.selected_by_percent), // Or use a projection
-      form_score: Number(row.form),
-      fixture_difficulty: Number(row.fixture_difficulty), // Join with fixtures/matches if needed
-      minutes_risk: 100 - Number(row.chance_of_playing_next_round),
-      xgi_per_90: Number(row.expected_goal_involvements_per_90),
-      captain_score: 0
-    };
-  }).filter(candidate => candidate !== null);
+  return rawPlayerStats
+    .map((row) => {
+      // Guard essential fields; exclude if id is missing or name/team unknown
+      if (!row || row.id === undefined || row.id === null) {
+        return null;
+      }
+
+      const id = Number(row.id);
+      const name = String(row.web_name ?? '').trim() || 'Unknown';
+      const team = String(row.team ?? '').trim() || 'Unknown';
+
+      // If both name and team are unknown, exclude (likely broken join)
+      if (name === 'Unknown' && team === 'Unknown') return null;
+
+      const price = Number(row.now_cost);
+      const ownership = Number(row.selected_by_percent);
+      const expectedOwnership = Number(row.expected_ownership ?? ownership);
+      const form = row.form !== undefined ? Number(row.form) : 0;
+      const fixtureDifficulty = row.fixture_difficulty !== undefined ? Number(row.fixture_difficulty) : 3;
+      const chanceNext = row.chance_of_playing_next_round !== undefined ? Number(row.chance_of_playing_next_round) : 100;
+      const minutesRisk = Math.min(Math.max(100 - chanceNext, 0), 100);
+      const xgi90 = row.expected_goal_involvements_per_90 !== undefined
+        ? Number(row.expected_goal_involvements_per_90)
+        : 0;
+
+      // Exclude clearly invalid numerical rows (NaN or negative price)
+      if (Number.isNaN(id) || price <= 0 || Number.isNaN(xgi90)) return null;
+
+      return {
+        player_id: id,
+        name,
+        team,
+        position: normalizePosition(row.position, row.element_type),
+        price,
+        ownership: Number.isFinite(ownership) ? ownership : 0,
+        expected_ownership: Number.isFinite(expectedOwnership) ? expectedOwnership : 0,
+        form_score: Number.isFinite(form) ? form : 0,
+        fixture_difficulty: Number.isFinite(fixtureDifficulty) ? fixtureDifficulty : 3,
+        minutes_risk: minutesRisk,
+        xgi_per_90: Number.isFinite(xgi90) ? xgi90 : 0,
+        captain_score: 0,
+      } as CaptainCandidate;
+    })
+    .filter((candidate): candidate is CaptainCandidate => candidate !== null);
 }
