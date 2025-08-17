@@ -171,7 +171,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               <ComparisonView
                 candidateA={a}
                 candidateB={b}
-                size="medium"
+                size="small"
                 layout="horizontal"
               />
             );

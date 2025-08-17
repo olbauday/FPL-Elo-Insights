@@ -49,7 +49,7 @@ describe('PlayerCard render and interactions', () => {
     const { rerender } = render(<PlayerCard player={mk()} size="small" />);
     // small has smaller score font; check class presence heuristically
     const getRoot = () => screen.getByRole('button', { name: /select test player/i });
-    expect(getRoot().className).toContain('p-4');
+  expect(getRoot().className).toContain('p-3');
 
     rerender(<PlayerCard player={mk()} size="medium" />);
     expect(getRoot().className).toContain('p-6');

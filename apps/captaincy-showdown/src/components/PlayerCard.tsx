@@ -57,11 +57,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     switch (size) {
       case 'small':
         return {
-          card: 'p-4',
-          name: 'text-lg',
-          score: 'text-3xl',
+          card: 'p-3',
+          name: 'text-base',
+          score: 'text-2xl',
           grid: 'grid-cols-2 gap-2',
-          metric: 'text-sm',
+          metric: 'text-xs',
         };
       case 'large':
         return {

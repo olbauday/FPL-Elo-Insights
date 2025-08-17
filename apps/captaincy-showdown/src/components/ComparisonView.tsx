@@ -46,9 +46,9 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
   const getVersusContainerClasses = (): string => {
     if (layout === 'vertical') {
-      return 'flex flex-col items-center justify-center gap-2 py-2';
+      return `flex flex-col items-center justify-center ${size === 'small' ? 'gap-1 py-1' : 'gap-2 py-2'}`;
     }
-    return 'flex flex-col lg:flex-col items-center justify-center gap-2 lg:px-4';
+    return `flex flex-col lg:flex-col items-center justify-center ${size === 'small' ? 'gap-1 lg:px-2' : 'gap-2 lg:px-4'}`;
   };
 
   // Placeholder component for empty slots
