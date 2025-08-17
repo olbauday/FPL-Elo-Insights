@@ -20,7 +20,7 @@ const mk = (over: Partial<CaptainCandidate> = {}): CaptainCandidate => ({
 });
 
 describe('EnhancedApp compare flow', () => {
-  test('enables compare mode, selects players, and shows/hides comparison at 2 vs 3 selections', async () => {
+  test('enables compare mode, selects players, and shows comparison at 2 selections (capped at 2)', async () => {
     const players: CaptainCandidate[] = [
       mk({ player_id: 1, name: 'Alpha' }),
       mk({ player_id: 2, name: 'Bravo', captain_score: 79.5 }),
@@ -32,21 +32,20 @@ describe('EnhancedApp compare flow', () => {
     // Enable Compare Mode
     const compareBtn = screen.getByRole('button', { name: /compare mode/i });
     fireEvent.click(compareBtn);
-    expect(screen.getByText(/Compare Mode \(0\/3\)/i)).toBeInTheDocument();
+  expect(screen.getByText(/Compare Mode \(0\/2\)/i)).toBeInTheDocument();
 
     // Select two players
     fireEvent.click(screen.getByText('Alpha'));
     fireEvent.click(screen.getByText('Bravo'));
-    expect(screen.getByText(/2\/3 selected/i)).toBeInTheDocument();
+  expect(screen.getByText(/2\/2 selected/i)).toBeInTheDocument();
 
     // ComparisonView should appear when exactly two are selected
     expect(screen.getByRole('region', { name: /captain candidate comparison/i })).toBeInTheDocument();
 
-    // Select a third player
-    fireEvent.click(screen.getByText('Charlie'));
-    expect(screen.getByText(/3\/3 selected/i)).toBeInTheDocument();
-
-    // With 3 selected, comparison section (exactly-2) should no longer render
-    expect(screen.queryByRole('region', { name: /captain candidate comparison/i })).not.toBeInTheDocument();
+  // Attempt to select a third player should have no effect due to 2-cap
+  fireEvent.click(screen.getByText('Charlie'));
+  expect(screen.getByText(/2\/2 selected/i)).toBeInTheDocument();
+  // Comparison section should remain visible
+  expect(screen.getByRole('region', { name: /captain candidate comparison/i })).toBeInTheDocument();
   });
 });

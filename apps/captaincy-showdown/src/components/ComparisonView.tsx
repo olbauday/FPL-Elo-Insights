@@ -151,7 +151,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
             <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
               Quick Comparison
             </h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div className="text-center">
                 <div className="font-medium text-gray-600">Better Score</div>
                 <div className="text-lg font-bold mt-1">
