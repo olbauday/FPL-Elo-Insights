@@ -1,4 +1,4 @@
-# FPL-Elo-Insights: A Comprehensive FPL Dataset 
+# FPL-Elo-Insights: A Comprehensive FPL Dataset
 
 Welcome to FPL-Elo-Insights, a meticulously curated dataset designed to empower your Fantasy Premier League analysis beyond the surface. This project uniquely links official FPL player data with detailed match statistics and historical team Elo ratings, allowing for unparalleled insights.
 
@@ -40,7 +40,7 @@ The data for the season is organized into three main categories within the `data
 1.  **Master Files**
     *   **Location**: `/`
     *   **Description**: These are the main, always-up-to-date files for the entire season.
-    *   **Files**: `players.csv`, `teams.csv`, `playerstats.csv`
+    *   **Files**: `players.csv`, `teams.csv`, `playerstats.csv`, `gameweeks.csv`
 
 2.  **By Gameweek**
     *   **Location**: `By Gameweek/GW{x}/`
@@ -129,7 +129,7 @@ This table contains data for **upcoming** games. It follows the exact same struc
 
 ---
 
-### `playermatchstats`
+### `playermatchstats` 
 
 This table provides detailed player-level statistics for each match, now including enhanced defensive and contextual metrics.
 
@@ -211,57 +211,90 @@ This table contains basic information about each player from the FPL API.
 
 ---
 
-### `playerstats`
+### `playerstats` This is the equivalent of FPL API Data
 
 This table stores a wide range of FPL player statistics, updated per gameweek.
 
 *   `id`: The ID of the player (referencing `player_id` in the `players` table).
+*   `first_name`, `second_name`, `web_name`: The player's names.
 *   `status`: The player's availability status (e.g., 'a' for available, 'i' for injured).
+*   `news`: Injury or suspension information.
+*   `news_added`: Timestamp for when the news was added.
 *   `chance_of_playing_next_round`: The player's chance of playing in the next round (%).
 *   `chance_of_playing_this_round`: The player's chance of playing in the current round (%).
 *   `now_cost`: The player's current cost in the FPL game.
-*   `now_cost_rank`: The player's cost rank among all players.
-*   `now_cost_rank_type`: The player's cost rank within their position.
-*   `cost_change_event`: The change in the player's cost since the last gameweek.
-*   `cost_change_event_fall`: The fall in the player's cost since the last gameweek.
-*   `cost_change_start`: The change in the player's cost since the start of the season.
-*   `cost_change_start_fall`: The fall in the player's cost since the start of the season.
+*   `now_cost_rank`, `now_cost_rank_type`: The player's cost rank overall and by position.
+*   `cost_change_event`, `cost_change_event_fall`: Price change in the current gameweek.
+*   `cost_change_start`, `cost_change_start_fall`: Price change since the start of the season.
 *   `selected_by_percent`: The percentage of FPL managers who have selected the player.
-*   `selected_rank`: The player's rank based on selection percentage.
-*   `selected_rank_type`: The player's rank based on selection percentage within their position.
+*   `selected_rank`, `selected_rank_type`: The player's rank based on selection percentage overall and by position.
 *   `total_points`: The player's total FPL points for the season.
 *   `event_points`: The player's FPL points for the current gameweek.
 *   `points_per_game`: The player's average FPL points per game.
-*   `points_per_game_rank`: The player's rank based on average points per game.
-*   `points_per_game_rank_type`: The player's rank based on average points per game within their position.
-*   `bonus`: Bonus points awarded to the player.
-*   `bps`: Bonus Points System score.
-*   `form`: The player's recent form, based on average points over the last few gameweeks.
-*   `form_rank`: The player's form rank.
-*   `form_rank_type`: The player's form rank within their position.
+*   `points_per_game_rank`, `points_per_game_rank_type`: The player's rank based on average points per game overall and by position.
+*   `minutes`: Total minutes played in the season.
+*   `goals_scored`: Total goals scored.
+*   `assists`: Total assists.
+*   `clean_sheets`: Total clean sheets.
+*   `goals_conceded`: Total goals conceded.
+*   `own_goals`: Total own goals.
+*   `penalties_saved`: Total penalties saved.
+*   `penalties_missed`: Total penalties missed.
+*   `yellow_cards`: Total yellow cards.
+*   `red_cards`: Total red cards.
+*   `saves`: Total saves.
+*   `starts`: Total matches started.
+*   `bonus`: Total bonus points.
+*   `bps`: Total Bonus Points System score.
+*   `form`: The player's recent form score.
+*   `form_rank`, `form_rank_type`: The player's form rank overall and by position.
 *   `value_form`: A measure of the player's value based on recent form and cost.
 *   `value_season`: A measure of the player's value based on season performance and cost.
 *   `dreamteam_count`: The number of times the player has been in the FPL Dream Team.
-*   `transfers_in`: Total transfers in for the player.
-*   `transfers_in_event`: Transfers in for the player in the current gameweek.
-*   `transfers_out`: Total transfers out for the player.
-*   `transfers_out_event`: Transfers out for the player in the current gameweek.
-*   `ep_next`: Expected points for the player in the next gameweek.
-*   `ep_this`: Expected points for the player in the current gameweek.
-*   `expected_goals`, `expected_assists`, `expected_goal_involvements`, `expected_goals_conceded`: Expected performance metrics.
-*   `expected_goals_per_90`, `expected_assists_per_90`, `expected_goal_involvements_per_90`, `expected_goals_conceded_per_90`: Expected performance metrics per 90 minutes.
-*   `influence`, `influence_rank`, `influence_rank_type`: Measures of a player's influence on the game.
-*   `creativity`, `creativity_rank`, `creativity_rank_type`: Measures of a player's creativity.
-*   `threat`, `threat_rank`, `threat_rank_type`: Measures of a player's attacking threat.
-*   `ict_index`, `ict_index_rank`, `ict_index_rank_type`: ICT Index (Influence, Creativity, Threat) and its ranks.
-*   `corners_and_indirect_freekicks_order`: Indicates if the player is likely to take corners and indirect freekicks.
-*   `direct_freekicks_order`: Indicates if the player is likely to take direct freekicks.
-*   `penalties_order`: Indicates if the player is likely to take penalties.
-*   `set_piece_threat`: A measure of the player's threat from set-piece situations.
+*   `transfers_in`, `transfers_in_event`: Total and gameweek transfers in.
+*   `transfers_out`, `transfers_out_event`: Total and gameweek transfers out.
+*   `ep_next`, `ep_this`: Expected points for the next and current gameweek.
+*   `expected_goals`, `expected_assists`, `expected_goal_involvements`, `expected_goals_conceded`: Expected performance metrics for the season.
+*   `expected_goals_per_90`, `expected_assists_per_90`, `expected_goal_involvements_per_90`, `expected_goals_conceded_per_90`: The same metrics, but normalized per 90 minutes.
+*   `influence`, `creativity`, `threat`, `ict_index`: FPL's proprietary metrics for player performance.
+*   `influence_rank`, `influence_rank_type`, `creativity_rank`, `creativity_rank_type`, `threat_rank`, `threat_rank_type`, `ict_index_rank`, `ict_index_rank_type`: Ranks for the ICT metrics.
+*   `corners_and_indirect_freekicks_order`, `direct_freekicks_order`, `penalties_order`: Player's rank for taking set pieces.
+*   `corners_and_indirect_freekicks_text`, `direct_freekicks_text`, `penalties_text`: Descriptive text about set-piece duties.
+*   `defensive_contribution`, `defensive_contribution_per_90`: Defensive action metrics.
+*   `saves_per_90`, `clean_sheets_per_90`, `goals_conceded_per_90`, `starts_per_90`: Performance metrics normalized per 90 minutes.
 *   `gw`: The gameweek these stats apply to.
 
 **Links:**
 *   `id` links to the `player_id` in the `players` table.
+
+---
+
+### `gameweeks` (This wont show up untill GW 2)
+
+This table stores a snapshot of data for every gameweek in the season, sourced from the FPL API.
+
+*   `id`: The gameweek number (1-38).
+*   `name`: The name of the gameweek (e.g., "Gameweek 1").
+*   `deadline_time`: The official FPL deadline for the gameweek.
+*   `deadline_time_epoch`: The deadline time in Unix epoch format.
+*   `deadline_time_game_offset`: Game deadline time offset in hours.
+*   `average_entry_score`: The average FPL score for all managers in that gameweek.
+*   `highest_score`: The highest score achieved by any manager in that gameweek.
+*   `finished`: Boolean indicating if the gameweek has finished.
+*   `is_previous`, `is_current`, `is_next`: Booleans indicating the status of the gameweek relative to the current time.
+*   `chip_plays`: A JSON object detailing the number of times each chip (e.g., wildcard, freehit) was played.
+*   `most_selected`: The player ID of the most selected player for that gameweek.
+*   `most_transferred_in`: The player ID of the most transferred-in player.
+*   `most_captained`: The player ID of the most captained player.
+*   `most_vice_captained`: The player ID of the most vice-captained player.
+*   `top_element`: The player ID of the top-scoring player of the gameweek.
+*   `top_element_info`: A JSON object with the points and ID of the top player.
+*   `transfers_made`: The total number of transfers made in that gameweek.
+*   `cup_leagues_created`: Boolean indicating if cup leagues were created.
+*   `h2h_ko_matches_created`: Boolean indicating if head-to-head knockout matches were created.
+
+**Links:**
+*   Player-related columns like `most_selected` link to the `id` in the `playerstats` table.
 
 ---
 
@@ -274,12 +307,9 @@ This table contains information about each team from the FPL API.
 *   `name`: The full name of the team.
 *   `short_name`: The short name (abbreviation) of the team.
 *   `strength`: Overall team strength (FPL rating).
-*   `strength_overall_home`: Overall team strength when playing at home (FPL rating).
-*   `strength_overall_away`: Overall team strength when playing away (FPL rating).
-*   `strength_attack_home`: Attacking strength when playing at home (FPL rating).
-*   `strength_attack_away`: Attacking strength when playing away (FPL rating).
-*   `strength_defence_home`: Defensive strength when playing at home (FPL rating).
-*   `strength_defence_away`: Defensive strength when playing away (FPL rating).
+*   `strength_overall_home`, `strength_overall_away`: Overall team strength at home vs. away.
+*   `strength_attack_home`, `strength_attack_away`: Attacking strength at home vs. away.
+*   `strength_defence_home`, `strength_defence_away`: Defensive strength at home vs. away.
 *   `pulse_id`: The team's ID on Pulse Live (a sports data provider).
 *   `elo`: The team's Elo rating from ClubElo.com.
 
