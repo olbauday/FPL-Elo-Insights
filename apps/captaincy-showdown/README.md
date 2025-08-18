@@ -22,6 +22,11 @@ npm run build
 npm run preview
 ```
 
+## Data refresh (optional)
+- The UI reads CSVs from `public/data/{season}`.
+- To refresh from the original source (Supabase), run the repo script `scripts/export_data.py` after setting `SUPABASE_URL` and `SUPABASE_KEY` in a `.env` at the repo root.
+- That script writes to `data/{SEASON}/...`. Copy the updated season folder into `apps/captaincy-showdown/public/data/{SEASON}` for local preview.
+
 ## Tailwind v4 tokens
 Tokens are defined in `src/index.css` under `@theme`:
 - --color-brand-coral, --color-brand-green, --color-brand-dark, --color-brand-gold, --color-brand-golden, --color-brand-blue

@@ -97,6 +97,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   const [sortBy, setSortBy] = useState<string>('Score');
   const [selectedPlayers, setSelectedPlayers] = useState<Set<number>>(new Set());
   const [isCompareMode, setIsCompareMode] = useState(false);
+  const [query, setQuery] = useState<string>('');
 
   const positions = ['All', 'Forward', 'Midfielder', 'Defender'];
   const sortOptions = ['Score', 'Price', 'Ownership', 'Form'];
@@ -108,6 +109,13 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (selectedPosition !== 'All') {
       const code = Object.entries(POSITION_LABEL).find(([, label]) => label === selectedPosition)?.[0];
       if (code) filtered = filtered.filter((p) => p.position === code);
+    }
+
+    if (query.trim().length > 0) {
+      const q = query.trim().toLowerCase();
+      filtered = filtered.filter((p) =>
+        p.name.toLowerCase().includes(q) || (p.team || '').toLowerCase().includes(q)
+      );
     }
 
     filtered.sort((a, b) => {
@@ -149,10 +157,10 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
 
       <div className="flex flex-wrap justify-center gap-4 mb-8">
         {/* Season & GW selectors */}
-        <div className="flex gap-2 items-center">
+    <div className="flex gap-2 items-center">
           <label className="text-gray-300">Season</label>
           <select
-            className="bg-white/10 border border-white/20 rounded-lg px-3 py-2"
+      className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-gray-200"
             value={selectedSeason || ''}
             onChange={async (e) => {
               const newSeason = e.target.value;
@@ -177,7 +185,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
 
           <label className="text-gray-300 ml-4">GW</label>
           <select
-            className="bg-white/10 border border-white/20 rounded-lg px-3 py-2"
+            className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-gray-200"
             value={typeof selectedGw === 'number' ? selectedGw : 1}
             onChange={(e) => {
               const gw = Number(e.target.value);
@@ -191,6 +199,17 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               <option key={gw} value={gw}>GW{gw}</option>
             ))}
           </select>
+        </div>
+
+        {/* Search */}
+        <div className="flex items-center">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search players or teams..."
+            className="min-w-[260px] bg-white/10 border border-white/20 rounded-full px-4 py-2 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-coral"
+          />
         </div>
 
         <div className="flex gap-2">
