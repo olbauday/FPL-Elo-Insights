@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { EnhancedPlayerCard } from './EnhancedPlayerCard';
 import type { CaptainCandidate } from '../types';
-import { getCaptainCandidates } from '../services/captaincyDataService';
+import { getCaptainCandidates, getTopCandidates } from '../services/captaincyDataService';
 
 interface EnhancedAppProps {
   players?: CaptainCandidate[];
@@ -49,6 +49,8 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   const [sortBy, setSortBy] = useState<string>('Score');
   const [selectedPlayers, setSelectedPlayers] = useState<Set<number>>(new Set());
   const [isCompareMode, setIsCompareMode] = useState(false);
+  const [search, setSearch] = useState<string>('');
+  const [topFive, setTopFive] = useState<CaptainCandidate[]>([]);
 
   const positions = ['All', 'Forward', 'Midfielder', 'Defender'];
   const sortOptions = ['Score', 'Price', 'Ownership', 'Form'];
@@ -60,6 +62,14 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (selectedPosition !== 'All') {
       const code = Object.entries(POSITION_LABEL).find(([, label]) => label === selectedPosition)?.[0];
       if (code) filtered = filtered.filter((p) => p.position === code);
+    }
+
+    // Apply search by player name or team (case-insensitive)
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)
+      );
     }
 
     filtered.sort((a, b) => {
@@ -78,7 +88,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     });
 
     return filtered;
-  }, [players, loadedPlayers, selectedPosition, sortBy]);
+  }, [players, loadedPlayers, selectedPosition, sortBy, search]);
 
   const handlePlayerSelect = (playerId: number) => {
     if (!isCompareMode) return;
@@ -87,6 +97,56 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   else if (next.size < 2) next.add(playerId);
     setSelectedPlayers(next);
   };
+
+  // Load Top 5 quick-select once data is available
+  useEffect(() => {
+    (async () => {
+      const gw = typeof gameweek === 'number' ? gameweek : resolvedGw;
+      const top = await getTopCandidates(5, gw, season);
+      setTopFive(top);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedGw, season]);
+
+  // URL state persistence: read on mount after first load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pos = params.get('pos');
+    const sort = params.get('sort');
+    const compare = params.get('compare');
+    const a = params.get('a');
+    const b = params.get('b');
+    const q = params.get('q');
+
+    if (pos) setSelectedPosition(pos);
+    if (sort) setSortBy(sort);
+    if (q) setSearch(q);
+    if (compare === '1') setIsCompareMode(true);
+
+    // Defer selection until players list is present
+    if ((a || b)) {
+      const ids = [a, b].filter(Boolean).map(v => Number(v));
+      if (ids.length) {
+        setSelectedPlayers(new Set(ids.slice(0, 2)));
+      }
+    }
+    // only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync URL params on key state changes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('pos', selectedPosition);
+    params.set('sort', sortBy);
+    if (search.trim()) params.set('q', search); else params.delete('q');
+    if (isCompareMode) params.set('compare', '1'); else params.delete('compare');
+    const ids = Array.from(selectedPlayers.values());
+    if (ids[0] != null) params.set('a', String(ids[0])); else params.delete('a');
+    if (ids[1] != null) params.set('b', String(ids[1])); else params.delete('b');
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, '', newUrl);
+  }, [selectedPosition, sortBy, isCompareMode, selectedPlayers, search]);
 
   return (
     <div className="min-h-screen text-white p-5">
@@ -100,6 +160,17 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mb-8">
+        {/* Search */}
+        <div className="flex items-center">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or team"
+            className="px-4 py-2 rounded-xl bg-white/10 text-gray-100 placeholder-gray-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-brand-green"
+            aria-label="Search players"
+          />
+        </div>
+
         <div className="flex gap-2">
           {positions.map((position) => (
             <button
@@ -146,6 +217,28 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
           Compare Mode {isCompareMode && `(${selectedPlayers.size}/2)`}
         </button>
       </div>
+
+      {/* Quick Select Top 5 */}
+      {topFive.length > 0 && (
+        <div className="max-w-7xl mx-auto mb-4">
+          <div className="flex flex-wrap gap-2 items-center text-sm">
+            <span className="text-gray-300">Quick Select:</span>
+            {topFive.map(p => (
+              <button
+                key={p.player_id}
+                onClick={() => {
+                  if (!isCompareMode) setIsCompareMode(true);
+                  handlePlayerSelect(p.player_id);
+                }}
+                className={`px-3 py-1 rounded-full border transition ${selectedPlayers.has(p.player_id) ? 'bg-brand-coral text-white border-brand-coral' : 'bg-white/10 text-gray-200 border-white/20 hover:bg-white/20'}`}
+                aria-pressed={selectedPlayers.has(p.player_id)}
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isCompareMode && (
         <div className="text-center mb-6">
