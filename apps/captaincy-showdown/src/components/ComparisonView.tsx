@@ -2,6 +2,7 @@ import React from 'react';
 import type { CaptainCandidate } from '../types';
 import PlayerCard from './PlayerCard';
 import VersusIndicator from './VersusIndicator';
+import ScoreDeltaBadge from './ScoreDeltaBadge';
 
 interface ComparisonViewProps {
   candidateA: CaptainCandidate | null;
@@ -33,7 +34,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
     
     // Responsive horizontal layout
     return `
-      flex flex-col lg:flex-row 
+  flex flex-col lg:flex-row lg:flex-wrap
       space-y-4 lg:space-y-0 lg:space-x-4 
       items-center lg:items-stretch
     `;
@@ -45,9 +46,9 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
   const getVersusContainerClasses = (): string => {
     if (layout === 'vertical') {
-      return 'flex justify-center py-2';
+      return `flex flex-col items-center justify-center ${size === 'small' ? 'gap-1 py-1' : 'gap-2 py-2'}`;
     }
-    return 'flex items-center justify-center lg:px-4';
+    return `flex flex-col lg:flex-col items-center justify-center ${size === 'small' ? 'gap-1 lg:px-2' : 'gap-2 lg:px-4'}`;
   };
 
   // Placeholder component for empty slots
@@ -122,9 +123,10 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
         )}
       </div>
 
-      {/* Versus Indicator */}
+      {/* Versus Indicator + optional delta badge */}
       <div className={getVersusContainerClasses()}>
         <VersusIndicator size={size} />
+        <ScoreDeltaBadge a={candidateA ?? undefined} b={candidateB ?? undefined} size={size} />
       </div>
 
       {/* Player B */}
@@ -144,12 +146,12 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
       {/* Comparison Summary (optional) */}
       {candidateA && candidateB && (
-        <div className="w-full mt-6 lg:mt-8">
+        <div className="w-full lg:basis-full mt-6 lg:mt-8">
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-3 text-center">
               Quick Comparison
             </h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div className="text-center">
                 <div className="font-medium text-gray-600">Better Score</div>
                 <div className="text-lg font-bold mt-1">

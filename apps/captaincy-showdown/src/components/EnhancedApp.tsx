@@ -84,7 +84,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (!isCompareMode) return;
     const next = new Set(selectedPlayers);
     if (next.has(playerId)) next.delete(playerId);
-    else if (next.size < 3) next.add(playerId);
+  else if (next.size < 2) next.add(playerId);
     setSelectedPlayers(next);
   };
 
@@ -143,7 +143,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               : 'bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20'
           }`}
         >
-          Compare Mode {isCompareMode && `(${selectedPlayers.size}/3)`}
+          Compare Mode {isCompareMode && `(${selectedPlayers.size}/2)`}
         </button>
       </div>
 
@@ -151,14 +151,18 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
         <div className="text-center mb-6">
           <div className="inline-block bg-purple-500/20 border border-purple-400/30 rounded-xl px-4 py-2 backdrop-blur-sm">
             <span className="text-purple-300 font-medium">
-              Click up to 3 players to compare • {selectedPlayers.size}/3 selected
+              Click up to 2 players to compare • {selectedPlayers.size}/2 selected
             </span>
           </div>
         </div>
       )}
 
+      {/* Cards grid; show all until 2 selected, then filter to the selected pair */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-        {filteredAndSortedPlayers.map((player) => (
+        {(isCompareMode && selectedPlayers.size === 2
+          ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
+          : filteredAndSortedPlayers
+        ).map((player) => (
           <EnhancedPlayerCard
             key={player.player_id}
             player={player}

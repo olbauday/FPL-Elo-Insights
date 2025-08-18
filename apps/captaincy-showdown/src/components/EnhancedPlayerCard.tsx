@@ -112,6 +112,13 @@ export const EnhancedPlayerCard: React.FC<EnhancedPlayerCardProps> = ({
 
   const riskData = getRiskColor(player.minutes_risk);
   const floatingLabel = getFloatingStatLabel(player);
+  
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick?.(player);
+    }
+  };
 
   return (
     <div className={`relative ${className}`}>
@@ -131,6 +138,11 @@ export const EnhancedPlayerCard: React.FC<EnhancedPlayerCardProps> = ({
           borderColor: 'rgba(255, 255, 255, 0.12)'
         }}
         onClick={() => onClick?.(player)}
+  onKeyDown={handleKeyDown}
+  tabIndex={0}
+  role="button"
+  aria-label={`Select ${player.name} as captain candidate`}
+  aria-pressed={isSelected}
       >
         {/* Top accent gradient bar */}
         <div 
