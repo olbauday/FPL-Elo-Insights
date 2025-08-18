@@ -77,7 +77,7 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
     const sortedCandidates = validCandidates.sort((a, b) => b.captain_score - a.captain_score);
     
     // Console log top 20 for analysis
-    console.log('\n🏆 TOP 20 CAPTAIN CANDIDATES (2024-25 GW38) 🏆');
+  console.log(`\n🏆 TOP 20 CAPTAIN CANDIDATES (${season} GW${gameweek}) 🏆`);
     console.table(
       sortedCandidates.slice(0, 20).map((candidate, index) => ({
         Rank: index + 1,
