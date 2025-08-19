@@ -10,3 +10,5 @@ apps/captaincy-showdown/.vite/
 # tests temporales
 apps/captaincy-showdown/temp-tests/
 apps/captaincy-showdown/src/test/
+# Ignore app runtime data (mirrored from root/data)
+apps/captaincy-showdown/public/data/
