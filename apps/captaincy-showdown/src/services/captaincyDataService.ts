@@ -23,7 +23,11 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
     ]);
     
     // Filter playerstats to only include the specified gameweek (to avoid duplicates)
-    const gwPlayerStats = playerstats.filter((stats: any) => Number(stats.gw) === gameweek);
+    let gwPlayerStats = playerstats.filter((stats: any) => Number(stats.gw) === gameweek);
+    if (gwPlayerStats.length === 0) {
+      console.warn(`No playerstats with gw=${gameweek} found in master file; falling back to all stats (season=${season}).`);
+      gwPlayerStats = playerstats;
+    }
     
     // Create fixture difficulty lookup
     const getFixtureDifficulty = (teamCode: string): number => {
