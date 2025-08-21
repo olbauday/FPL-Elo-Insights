@@ -243,7 +243,17 @@ export const EnhancedPlayerCard: React.FC<EnhancedPlayerCardProps> = ({
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
           >
             <div className="text-white text-opacity-60 text-xs font-medium mb-1">Fixture</div>
-            <div className="text-white font-bold text-sm">Difficulty: {player.fixture_difficulty}/5</div>
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-white font-bold text-sm whitespace-nowrap">
+                {player.fixture_difficulty}/5
+                {player.opponent && (
+                  <>
+                    {' '}{player.opponent}
+                    {' '}{player.home === true ? '(L)' : player.home === false ? '(V)' : ''}
+                  </>
+                )}
+              </div>
+            </div>
             {renderFixtureDifficulty([player.fixture_difficulty, player.fixture_difficulty, player.fixture_difficulty, player.fixture_difficulty, player.fixture_difficulty])}
           </div>
 

@@ -49,9 +49,11 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       const initialSeason = season || urlSeason || seasonsList[0] || '2025-2026';
       setSelectedSeason(initialSeason);
 
-      let initialGw: number | undefined = typeof gameweek === 'number' ? gameweek : (typeof urlGwNum === 'number' && !Number.isNaN(urlGwNum) ? urlGwNum : undefined);
+      // Prefer next upcoming GW unless URL explicitly pins one
+      let initialGw: number | undefined = typeof urlGwNum === 'number' && !Number.isNaN(urlGwNum)
+        ? urlGwNum
+        : (typeof gameweek === 'number' ? gameweek : undefined);
       if (!initialGw) {
-        // Detect next upcoming GW for the chosen season (best-effort; defaults to 1)
         const detected = await detectNextUpcomingGw(initialSeason).catch(() => 1);
         if (!active) return;
         initialGw = detected || 1;
@@ -66,9 +68,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
 
       // 3) Load data if needed
       if (!players || players.length === 0) {
-        console.log('🚀 Loading captain candidates for:', { season: initialSeason, gw: initialGw });
         const data = await getCaptainCandidates(initialGw, initialSeason);
-        console.log('📦 Received data:', { count: data?.length || 0, first: data?.[0] });
         if (!active) return;
         setLoadedPlayers(data);
         setResolvedLastUpdated(new Date().toLocaleTimeString());
@@ -86,10 +86,8 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (!bootstrapped) return;
     if (players && players.length > 0) return;
     if (!selectedSeason || typeof selectedGw !== 'number') return;
-    console.log('🔄 Reloading data for:', { season: selectedSeason, gw: selectedGw });
     (async () => {
       const data = await getCaptainCandidates(selectedGw!, selectedSeason!);
-      console.log('📦 Reloaded data:', { count: data?.length || 0 });
       if (!active) return;
       setLoadedPlayers(data);
       setResolvedLastUpdated(new Date().toLocaleTimeString());
@@ -107,23 +105,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   const sortOptions = ['Score', 'Price', 'Ownership', 'Form'];
 
   const filteredAndSortedPlayers = useMemo(() => {
-    let base = (players && players.length > 0) ? players : loadedPlayers;
-    
-    // Debug logging
-    console.log('🔍 Filtering debug:', {
-      propsPlayers: players?.length || 0,
-      loadedPlayers: loadedPlayers?.length || 0,
-      baseLength: base?.length || 0,
-      selectedPosition,
-      query: query.trim(),
-      sortBy
-    });
-    
-    if (!base || base.length === 0) {
-      console.log('⚠️ No base data available');
-      return [];
-    }
-    
+  let base = (players && players.length > 0) ? players : loadedPlayers;
     let filtered = [...base];
 
     if (selectedPosition !== 'All') {
@@ -153,13 +135,8 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       }
     });
 
-    console.log('🎯 Filtered result:', {
-      filteredLength: filtered.length,
-      firstFew: filtered.slice(0, 3).map(p => ({ name: p.name, score: p.captain_score }))
-    });
-
     return filtered;
-  }, [players, loadedPlayers, selectedPosition, query, sortBy]);
+  }, [players, loadedPlayers, selectedPosition, sortBy]);
 
   const handlePlayerSelect = (playerId: number) => {
     if (!isCompareMode) return;
@@ -181,7 +158,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mb-8">
-        {/* Season & GW selectors */}
+  {/* Season & GW selectors */}
     <div className="flex gap-2 items-center">
           <label className="text-gray-300">Season</label>
           <select
@@ -225,6 +202,20 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
             ))}
           </select>
         </div>
+
+        {/* Quick: jump to next upcoming GW */}
+        <button
+          className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-gray-200 hover:bg-white/20"
+          onClick={() => {
+            // Move to the next GW relative to current selection
+            const current = typeof selectedGw === 'number' ? selectedGw : 1;
+            const next = Math.min(current + 1, 38);
+            setSelectedGw(next);
+            const params = new URLSearchParams(window.location.search);
+            params.set('gw', String(next));
+            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+          }}
+        >Next</button>
 
         {/* Search */}
         <div className="flex items-center">
@@ -295,33 +286,19 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       )}
 
       {/* Cards grid; show all until 2 selected, then filter to the selected pair */}
-      {!bootstrapped ? (
-        <div className="text-center py-12">
-          <div className="inline-block bg-white/10 rounded-xl px-6 py-4 backdrop-blur-sm">
-            <span className="text-gray-300">Loading captain candidates...</span>
-          </div>
-        </div>
-      ) : filteredAndSortedPlayers.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="inline-block bg-white/10 rounded-xl px-6 py-4 backdrop-blur-sm">
-            <span className="text-gray-300">No candidates found. Try adjusting your filters.</span>
-          </div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-          {(isCompareMode && selectedPlayers.size === 2
-            ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
-            : filteredAndSortedPlayers
-          ).map((player) => (
-            <EnhancedPlayerCard
-              key={player.player_id}
-              player={player}
-              isSelected={selectedPlayers.has(player.player_id)}
-              onClick={() => handlePlayerSelect(player.player_id)}
-            />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
+        {(isCompareMode && selectedPlayers.size === 2
+          ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
+          : filteredAndSortedPlayers
+        ).map((player) => (
+          <EnhancedPlayerCard
+            key={player.player_id}
+            player={player}
+            isSelected={selectedPlayers.has(player.player_id)}
+            onClick={() => handlePlayerSelect(player.player_id)}
+          />
+        ))}
+      </div>
 
       <div className="text-center mt-12 text-gray-400">
         <p className="text-sm">Powered by FPL-Elo-Insights • Built for Bendito Fantasy</p>
