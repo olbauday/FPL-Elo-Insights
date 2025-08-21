@@ -18,6 +18,8 @@ type Agg = {
 type AggMap = Map<number, Agg>; // player_id -> agg
 
 const cache: Map<string, AggMap> = new Map(); // key = `${season}#${gameweek}`
+// Track in-flight builds to avoid duplicate work when many rows call this concurrently
+const inflight: Map<string, Promise<AggMap>> = new Map();
 
 async function tryLoadPmsCsv(path: string): Promise<any[]> {
 	try {
@@ -30,7 +32,9 @@ async function tryLoadPmsCsv(path: string): Promise<any[]> {
 async function buildAggMap(season: string, gameweek: number, lookback: number = 3): Promise<AggMap> {
 	const key = `${season}#${gameweek}`;
 	if (cache.has(key)) return cache.get(key)!;
+	if (inflight.has(key)) return inflight.get(key)!;
 
+	const buildPromise = (async () => {
 	const map: AggMap = new Map();
 	// Consider current GW and up to `lookback` previous GWs
 	const gws: number[] = [];
@@ -75,20 +79,28 @@ async function buildAggMap(season: string, gameweek: number, lookback: number = 
 			if (startMin === 0) agg.starts += 1;
 		}
 	}
-
 	cache.set(key, map);
 	return map;
+	})();
+
+	inflight.set(key, buildPromise);
+	try {
+		const result = await buildPromise;
+		return result;
+	} finally {
+		inflight.delete(key);
+	}
 }
 
 export async function enrichWithRecentPerformance(
 	stats: PlayerStats,
 	season: string,
-	gameweek: number
+	gameweek: number,
+	prebuilt?: Map<number, any>
 ): Promise<PlayerStats> {
 	const pid = Number(stats.id ?? stats.player_id);
 	if (!Number.isFinite(pid) || pid <= 0) return stats;
-
-	const map = await buildAggMap(season, gameweek, 3);
+	const map = prebuilt ?? (await buildAggMap(season, gameweek, 3));
 	const agg = map.get(pid);
 	if (!agg) return stats;
 
@@ -107,3 +119,4 @@ export async function enrichWithRecentPerformance(
 }
 
 export default enrichWithRecentPerformance;
+export { buildAggMap };

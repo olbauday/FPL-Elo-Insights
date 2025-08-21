@@ -1,7 +1,7 @@
 import { getCsvPath } from '../utils/csvPathConfig';
 import { loadCSVData } from '../utils/dataLoader';
 import { mapToCaptainCandidates } from '../utils/candidateMapper';
-import { enrichWithRecentPerformance } from '../utils/performanceEnricher';
+import { enrichWithRecentPerformance, buildAggMap } from '../utils/performanceEnricher';
 import { updateCaptainScores } from '../engine/captainScore';
 
 export async function getCaptainCandidates(gameweek: number, season: string = '2025-2026') {
@@ -82,10 +82,20 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
       };
     });
 
+    // Build recent performance map once and reuse across rows
+    const perfMap = await buildAggMap(season, gameweek, 3);
     // Enrich with recent performance (rolling xGI/90, starts, minutes)
-    const enrichedWithPerf = await Promise.all(
-      enrichedPlayerStats.map((row: any) => enrichWithRecentPerformance(row, season, gameweek))
+    const enrichedWithPerf = enrichedPlayerStats.map((row: any) =>
+      ({ ...(row as any), ...(perfMap.get(Number(row.id ?? row.player_id)) ? {} : {}) })
     );
+    // For rows present in perfMap, call light enricher with prebuilt map; otherwise keep row as-is
+    for (let i = 0; i < enrichedWithPerf.length; i++) {
+      const row: any = enrichedWithPerf[i];
+      const pid = Number(row.id ?? row.player_id);
+      if (Number.isFinite(pid) && perfMap.has(pid)) {
+        enrichedWithPerf[i] = await enrichWithRecentPerformance(row, season, gameweek, perfMap);
+      }
+    }
     
   const candidates = mapToCaptainCandidates(enrichedWithPerf);
     const candidatesWithScores = updateCaptainScores(candidates);
