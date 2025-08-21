@@ -61,6 +61,8 @@ export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[
         expected_ownership: Number.isFinite(expectedOwnership) ? expectedOwnership : 0,
         form_score: Number.isFinite(form) ? form : 0,
         fixture_difficulty: Number.isFinite(fixtureDifficulty) ? fixtureDifficulty : 3,
+  opponent: typeof row.opponent === 'string' ? row.opponent : undefined,
+  home: typeof row.home === 'boolean' ? row.home : undefined,
         minutes_risk: minutesRisk,
         xgi_per_90: Number.isFinite(xgi90) ? xgi90 : 0,
         captain_score: 0,
