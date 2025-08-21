@@ -66,7 +66,9 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
 
       // 3) Load data if needed
       if (!players || players.length === 0) {
+        console.log('🚀 Loading captain candidates for:', { season: initialSeason, gw: initialGw });
         const data = await getCaptainCandidates(initialGw, initialSeason);
+        console.log('📦 Received data:', { count: data?.length || 0, first: data?.[0] });
         if (!active) return;
         setLoadedPlayers(data);
         setResolvedLastUpdated(new Date().toLocaleTimeString());
@@ -84,8 +86,10 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (!bootstrapped) return;
     if (players && players.length > 0) return;
     if (!selectedSeason || typeof selectedGw !== 'number') return;
+    console.log('🔄 Reloading data for:', { season: selectedSeason, gw: selectedGw });
     (async () => {
       const data = await getCaptainCandidates(selectedGw!, selectedSeason!);
+      console.log('📦 Reloaded data:', { count: data?.length || 0 });
       if (!active) return;
       setLoadedPlayers(data);
       setResolvedLastUpdated(new Date().toLocaleTimeString());
@@ -103,7 +107,23 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   const sortOptions = ['Score', 'Price', 'Ownership', 'Form'];
 
   const filteredAndSortedPlayers = useMemo(() => {
-  let base = (players && players.length > 0) ? players : loadedPlayers;
+    let base = (players && players.length > 0) ? players : loadedPlayers;
+    
+    // Debug logging
+    console.log('🔍 Filtering debug:', {
+      propsPlayers: players?.length || 0,
+      loadedPlayers: loadedPlayers?.length || 0,
+      baseLength: base?.length || 0,
+      selectedPosition,
+      query: query.trim(),
+      sortBy
+    });
+    
+    if (!base || base.length === 0) {
+      console.log('⚠️ No base data available');
+      return [];
+    }
+    
     let filtered = [...base];
 
     if (selectedPosition !== 'All') {
@@ -133,8 +153,13 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       }
     });
 
+    console.log('🎯 Filtered result:', {
+      filteredLength: filtered.length,
+      firstFew: filtered.slice(0, 3).map(p => ({ name: p.name, score: p.captain_score }))
+    });
+
     return filtered;
-  }, [players, loadedPlayers, selectedPosition, sortBy]);
+  }, [players, loadedPlayers, selectedPosition, query, sortBy]);
 
   const handlePlayerSelect = (playerId: number) => {
     if (!isCompareMode) return;
@@ -270,19 +295,33 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
       )}
 
       {/* Cards grid; show all until 2 selected, then filter to the selected pair */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-        {(isCompareMode && selectedPlayers.size === 2
-          ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
-          : filteredAndSortedPlayers
-        ).map((player) => (
-          <EnhancedPlayerCard
-            key={player.player_id}
-            player={player}
-            isSelected={selectedPlayers.has(player.player_id)}
-            onClick={() => handlePlayerSelect(player.player_id)}
-          />
-        ))}
-      </div>
+      {!bootstrapped ? (
+        <div className="text-center py-12">
+          <div className="inline-block bg-white/10 rounded-xl px-6 py-4 backdrop-blur-sm">
+            <span className="text-gray-300">Loading captain candidates...</span>
+          </div>
+        </div>
+      ) : filteredAndSortedPlayers.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="inline-block bg-white/10 rounded-xl px-6 py-4 backdrop-blur-sm">
+            <span className="text-gray-300">No candidates found. Try adjusting your filters.</span>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
+          {(isCompareMode && selectedPlayers.size === 2
+            ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
+            : filteredAndSortedPlayers
+          ).map((player) => (
+            <EnhancedPlayerCard
+              key={player.player_id}
+              player={player}
+              isSelected={selectedPlayers.has(player.player_id)}
+              onClick={() => handlePlayerSelect(player.player_id)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="text-center mt-12 text-gray-400">
         <p className="text-sm">Powered by FPL-Elo-Insights • Built for Bendito Fantasy</p>

@@ -19,20 +19,26 @@ function normalizePosition(pos: any, elementType?: any): 'GKP'|'DEF'|'MID'|'FWD'
 export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[] {
   return rawPlayerStats
     .map((row) => {
-      // Guard essential fields; exclude if id is missing or name/team unknown
-      if (!row || row.id === undefined || row.id === null) {
-        return null;
-      }
+      if (!row) return null;
 
-      const id = Number(row.id);
-      const name = String(row.web_name ?? '').trim() || 'Unknown';
-      const team = String(row.team ?? '').trim() || 'Unknown';
+      // Accept multiple common ID shapes
+      const rawId = row.id ?? row.player_id ?? row.element_id ?? row.element ?? row.playerId;
+      if (rawId === undefined || rawId === null || rawId === '') return null;
+
+      const id = Number(rawId);
+      const name = String(
+        row.web_name ??
+        (row.first_name && row.second_name ? `${row.first_name} ${row.second_name}` : undefined) ??
+        row.name ??
+        ''
+      ).trim() || 'Unknown';
+      const team = String(row.team ?? row.team_name ?? '').trim() || 'Unknown';
 
       // If both name and team are unknown, exclude (likely broken join)
       if (name === 'Unknown' && team === 'Unknown') return null;
 
-      const price = Number(row.now_cost);
-      const ownership = Number(row.selected_by_percent);
+  const price = Number(row.now_cost ?? row.price ?? row.cost);
+  const ownership = Number(row.selected_by_percent ?? row.ownership);
       const expectedOwnership = Number(row.expected_ownership ?? ownership);
       const form = row.form !== undefined ? Number(row.form) : 0;
       const fixtureDifficulty = row.fixture_difficulty !== undefined ? Number(row.fixture_difficulty) : 3;
@@ -40,7 +46,7 @@ export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[
       const minutesRisk = Math.min(Math.max(100 - chanceNext, 0), 100);
       const xgi90 = row.expected_goal_involvements_per_90 !== undefined
         ? Number(row.expected_goal_involvements_per_90)
-        : 0;
+        : Number(row.xgi_per_90 ?? row.xgi90 ?? 0);
 
       // Exclude clearly invalid numerical rows (NaN or negative price)
       if (Number.isNaN(id) || price <= 0 || Number.isNaN(xgi90)) return null;

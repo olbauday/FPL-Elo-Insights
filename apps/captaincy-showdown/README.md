@@ -27,21 +27,35 @@ npm run preview
 - To refresh from the original source (Supabase), run the repo script `scripts/export_data.py` after setting `SUPABASE_URL` and `SUPABASE_KEY` in a `.env` at the repo root.
 - That script writes to `data/{SEASON}/...`. Then mirror `data/` into `apps/captaincy-showdown/public/data/`.
 
-### Quick sync from root → app
-- Use the PowerShell helper to mirror `data/` into the app:
-	- `scripts/sync-data.ps1` (supports optional upstream fast‑forward and pushing to origin)
-	- Example:
-		- Run once: powershell -ExecutionPolicy Bypass -File scripts/sync-data.ps1
-		- Pull upstream and push origin: powershell -ExecutionPolicy Bypass -File scripts/sync-data.ps1 -PushOrigin
+### Enhanced data sync (recommended)
+- Use the enhanced PowerShell script for validation and smart repairs:
+  - `scripts/sync-data-enhanced.ps1` (validates structure, repairs missing GW files)
+  - Examples:
+    - Validate only: `powershell -ExecutionPolicy Bypass -File scripts/sync-data-enhanced.ps1 -ValidateOnly`
+    - Sync with structure repair: `powershell -ExecutionPolicy Bypass -File scripts/sync-data-enhanced.ps1 -FixStructure`
+    - Full sync with upstream: `powershell -ExecutionPolicy Bypass -File scripts/sync-data-enhanced.ps1 -PushOrigin -FixStructure`
 
-### Schedule daily updates
-- Upstream refresh times: 05:00 and 17:00 UTC. Schedule the sync to run a few minutes after, e.g., 05:15 & 17:15 UTC.
+### Quick sync from root → app (legacy)
+- Use the basic PowerShell helper to mirror `data/` into the app:
+  - `scripts/sync-data.ps1` (supports optional upstream fast‑forward and pushing to origin)
+  - Example:
+    - Run once: `powershell -ExecutionPolicy Bypass -File scripts/sync-data.ps1`
+    - Pull upstream and push origin: `powershell -ExecutionPolicy Bypass -File scripts/sync-data.ps1 -PushOrigin`### Schedule daily updates
+- Upstream refresh times: 05:00 and 17:00 UTC. Schedule the enhanced sync to run a few minutes after, e.g., 05:15 & 17:15 UTC.
 - Windows Task Scheduler steps:
 	- Action: Start a program
 	- Program/script: powershell.exe
-	- Add arguments:
-		-ExecutionPolicy Bypass -File "C:\\Users\\<you>\\FPL-Elo-Insights\\scripts\\sync-data.ps1" -PushOrigin
+	- Add arguments (enhanced):
+		-ExecutionPolicy Bypass -File "C:\\Users\\<you>\\FPL-Elo-Insights\\scripts\\sync-data-enhanced.ps1" -PushOrigin -FixStructure
 	- Start in: C:\\Users\\<you>\\FPL-Elo-Insights
+	- Configure for: Windows 10+; set triggers for the two daily times (UTC converted to your local time).
+
+### Data structure fixes
+The enhanced sync script addresses common issues:
+- **Missing GW-specific playerstats**: Creates from master data when possible
+- **Structure validation**: Reports missing files and folders
+- **Cross-season compatibility**: Handles different folder layouts between 2024-2025 and 2025-2026
+- **Performance enrichment**: App computes recent form from match stats when master data is stale
 	- Configure for: Windows 10+; set triggers for the two daily times (UTC converted to your local time).
 
 ## Tailwind v4 tokens
