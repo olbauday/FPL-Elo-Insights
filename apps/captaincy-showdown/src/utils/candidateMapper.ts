@@ -42,8 +42,22 @@ export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[
       const expectedOwnership = Number(row.expected_ownership ?? ownership);
       const form = row.form !== undefined ? Number(row.form) : 0;
       const fixtureDifficulty = row.fixture_difficulty !== undefined ? Number(row.fixture_difficulty) : 3;
-      const chanceNext = row.chance_of_playing_next_round !== undefined ? Number(row.chance_of_playing_next_round) : 100;
-      const minutesRisk = Math.min(Math.max(100 - chanceNext, 0), 100);
+      // Prefer explicit chance fields; if absent/blank, derive from minutes/starts heuristics
+      const rawChanceNext = row.chance_of_playing_next_round ?? row.chance_of_playing_this_round;
+      let minutesRisk = 50; // default mid risk if we know nothing
+      if (rawChanceNext !== undefined && String(rawChanceNext).trim() !== '') {
+        const chanceNext = Number(rawChanceNext);
+        if (Number.isFinite(chanceNext)) minutesRisk = Math.min(Math.max(100 - chanceNext, 0), 100);
+      } else {
+        const minutes = Number(row.minutes ?? 0);
+        const starts = Number(row.starts ?? 0);
+        // Heuristics: recent heavy minutes imply low risk
+        if (starts >= 1 && minutes >= 80) minutesRisk = 5; // likely nailed for next GW
+        else if (minutes >= 60) minutesRisk = 15;
+        else if (minutes >= 30) minutesRisk = 30;
+        else if (minutes > 0) minutesRisk = 45;
+        else minutesRisk = 60; // no minutes so far this season
+      }
       const xgi90 = row.expected_goal_involvements_per_90 !== undefined
         ? Number(row.expected_goal_involvements_per_90)
         : Number(row.xgi_per_90 ?? row.xgi90 ?? 0);

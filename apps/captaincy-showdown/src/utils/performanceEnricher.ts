@@ -6,8 +6,8 @@ export type PlayerStats = Record<string, any>;
 
 export async function enrichWithRecentPerformance(
 	stats: PlayerStats,
-	season: string,
-	gameweek: number
+	_season: string,
+	_gameweek: number
 ): Promise<PlayerStats> {
 	// In a future enhancement, read playermatchstats for recent GWs and
 	// compute rolling form/xGI. For now, pass through untouched.

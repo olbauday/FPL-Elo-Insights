@@ -10,11 +10,16 @@ interface CsvPathOptions {
 
 export function getCsvPath({ season = '2025-2026', gameweek, tournament, dataType }: CsvPathOptions): string {
   if (gameweek !== undefined) {
-    // For 2024-2025 season, matches are organized differently
-    if (season === '2024-2025' && dataType === 'matches') {
-      return `/data/${season}/matches/GW${gameweek}/matches.csv`;
+    // Gameweek-scoped files
+    if (dataType === 'matches' || dataType === 'fixtures') {
+      // 2024-2025 uses /matches/GW#/matches.csv
+      if (season === '2024-2025') {
+        return `/data/${season}/matches/GW${gameweek}/matches.csv`;
+      }
+      // 2025-2026 uses /By Gameweek/GW#/fixtures.csv
+      return `/data/${season}/By Gameweek/GW${gameweek}/fixtures.csv`;
     }
-    // By Gameweek (for 2025-2026 structure)
+    // Other By Gameweek datasets
     return `/data/${season}/By Gameweek/GW${gameweek}/${dataType}.csv`;
   }
   if (tournament) {

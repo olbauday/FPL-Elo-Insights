@@ -245,7 +245,7 @@ export const EnhancedPlayerCard: React.FC<EnhancedPlayerCardProps> = ({
             <div className="text-white text-opacity-60 text-xs font-medium mb-1">Fixture</div>
             <div className="flex items-center justify-between gap-2">
               <div className="text-white font-bold text-sm whitespace-nowrap">
-                Difficulty: {player.fixture_difficulty}/5
+                {player.fixture_difficulty}/5
                 {player.opponent && (
                   <>
                     {' '}{player.opponent}

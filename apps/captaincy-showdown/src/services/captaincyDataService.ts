@@ -9,7 +9,7 @@ export async function getCaptainCandidates(gameweek: number, season: string = '2
     const playersPath = getCsvPath({ season, dataType: 'players' });
     const teamsPath = getCsvPath({ season, dataType: 'teams' });
     const playerstatsPath = getCsvPath({ season, dataType: 'playerstats' });
-    const fixturesPath = getCsvPath({ season, dataType: 'matches', gameweek }); // Load fixtures for the specific gameweek
+  const fixturesPath = getCsvPath({ season, dataType: 'fixtures', gameweek }); // Load fixtures for the specific gameweek
     
     // Load data in parallel
     const [players, teams, playerstats, fixtures] = await Promise.all([
