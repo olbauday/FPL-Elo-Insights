@@ -30,6 +30,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
   const [selectedGw, setSelectedGw] = useState<number | undefined>(gameweek);
   const [resolvedLastUpdated, setResolvedLastUpdated] = useState<string>(lastUpdated ?? 'Just now');
   const [bootstrapped, setBootstrapped] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // If no players were provided, load them via the data service
   useEffect(() => {
@@ -68,10 +69,12 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
 
       // 3) Load data if needed
       if (!players || players.length === 0) {
+        setIsLoading(true);
         const data = await getCaptainCandidates(initialGw, initialSeason);
         if (!active) return;
         setLoadedPlayers(data);
         setResolvedLastUpdated(new Date().toLocaleTimeString());
+        setIsLoading(false);
       }
 
       setBootstrapped(true);
@@ -87,10 +90,12 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
     if (players && players.length > 0) return;
     if (!selectedSeason || typeof selectedGw !== 'number') return;
     (async () => {
+      setIsLoading(true);
       const data = await getCaptainCandidates(selectedGw!, selectedSeason!);
       if (!active) return;
       setLoadedPlayers(data);
       setResolvedLastUpdated(new Date().toLocaleTimeString());
+      setIsLoading(false);
     })();
     return () => { active = false; };
   }, [bootstrapped, players, selectedSeason, selectedGw]);
@@ -170,14 +175,14 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               // Update URL param
               const params = new URLSearchParams(window.location.search);
               params.set('season', newSeason);
-              window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+              window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
               // Choose next upcoming GW for this season
               const nextGw = await detectNextUpcomingGw(newSeason).catch(() => 1);
               setSelectedGw(nextGw || 1);
               const params2 = new URLSearchParams(window.location.search);
               params2.set('season', newSeason);
               params2.set('gw', String(nextGw || 1));
-              window.history.replaceState({}, '', `${window.location.pathname}?${params2.toString()}`);
+              window.history.pushState({}, '', `${window.location.pathname}?${params2.toString()}`);
             }}
           >
             {(availableSeasons.length ? availableSeasons : ['2025-2026', '2024-2025']).map((s) => (
@@ -194,7 +199,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
               setSelectedGw(gw);
               const params = new URLSearchParams(window.location.search);
               params.set('gw', String(gw));
-              window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+              window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
             }}
           >
             {Array.from({ length: 38 }, (_, i) => i + 1).map((gw) => (
@@ -213,7 +218,7 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
             setSelectedGw(next);
             const params = new URLSearchParams(window.location.search);
             params.set('gw', String(next));
-            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+            window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
           }}
         >Next</button>
 
@@ -285,20 +290,40 @@ export const EnhancedApp: React.FC<EnhancedAppProps> = ({
         </div>
       )}
 
-      {/* Cards grid; show all until 2 selected, then filter to the selected pair */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-        {(isCompareMode && selectedPlayers.size === 2
-          ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
-          : filteredAndSortedPlayers
-        ).map((player) => (
-          <EnhancedPlayerCard
-            key={player.player_id}
-            player={player}
-            isSelected={selectedPlayers.has(player.player_id)}
-            onClick={() => handlePlayerSelect(player.player_id)}
-          />
-        ))}
-      </div>
+      {/* Loading / Empty / Cards */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64 text-gray-300">Loading candidates…</div>
+      ) : filteredAndSortedPlayers.length === 0 ? (
+        <div className="flex flex-col items-center h-64 text-gray-300 gap-2">
+          <div>No candidates found.</div>
+          <button
+            className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-gray-200 hover:bg-white/20"
+            onClick={() => {
+              if (selectedSeason && typeof selectedGw === 'number') {
+                setIsLoading(true);
+                getCaptainCandidates(selectedGw, selectedSeason).then((data) => {
+                  setLoadedPlayers(data);
+                  setResolvedLastUpdated(new Date().toLocaleTimeString());
+                }).finally(() => setIsLoading(false));
+              }
+            }}
+          >Retry</button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
+          {(isCompareMode && selectedPlayers.size === 2
+            ? filteredAndSortedPlayers.filter(p => selectedPlayers.has(p.player_id))
+            : filteredAndSortedPlayers
+          ).map((player) => (
+            <EnhancedPlayerCard
+              key={player.player_id}
+              player={player}
+              isSelected={selectedPlayers.has(player.player_id)}
+              onClick={() => handlePlayerSelect(player.player_id)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="text-center mt-12 text-gray-400">
         <p className="text-sm">Powered by FPL-Elo-Insights • Built for Bendito Fantasy</p>

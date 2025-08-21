@@ -49,18 +49,30 @@ export function mapToCaptainCandidates(rawPlayerStats: any[]): CaptainCandidate[
         const chanceNext = Number(rawChanceNext);
         if (Number.isFinite(chanceNext)) minutesRisk = Math.min(Math.max(100 - chanceNext, 0), 100);
       } else {
-        const minutes = Number(row.minutes ?? 0);
-        const starts = Number(row.starts ?? 0);
-        // Heuristics: recent heavy minutes imply low risk
-        if (starts >= 1 && minutes >= 80) minutesRisk = 5; // likely nailed for next GW
-        else if (minutes >= 60) minutesRisk = 15;
-        else if (minutes >= 30) minutesRisk = 30;
-        else if (minutes > 0) minutesRisk = 45;
+        const recentAvg = Number(row.recent_minutes_avg ?? row.minutes ?? 0);
+        const recentStarts = Number(row.recent_starts ?? row.starts ?? 0);
+  const recentMatches = Number(row.recent_matches ?? 0);
+  const cautious = recentMatches < 2; // early-season / scarce sample
+  if (recentStarts >= 2 && recentAvg >= 70) minutesRisk = cautious ? 15 : 10;
+  else if (recentAvg >= 80) minutesRisk = cautious ? 10 : 5;
+  else if (recentAvg >= 60) minutesRisk = 15;
+        else if (recentAvg >= 30) minutesRisk = 30;
+        else if (recentAvg > 0) minutesRisk = 45;
         else minutesRisk = 60; // no minutes so far this season
       }
-      const xgi90 = row.expected_goal_involvements_per_90 !== undefined
+      const baseXgi90 = (row.expected_goal_involvements_per_90 !== undefined)
         ? Number(row.expected_goal_involvements_per_90)
         : Number(row.xgi_per_90 ?? row.xgi90 ?? 0);
+      const hasRolling = row.rolling_xgi_per_90 !== undefined && !Number.isNaN(Number(row.rolling_xgi_per_90));
+      if (hasRolling) {
+        const rolling = Number(row.rolling_xgi_per_90);
+        const minutesTotal = Number(row.recent_minutes_total ?? 0);
+        // Blend to reduce noise when minutes are scarce: weight rolling by min(minutes/180, 1)
+        const w = Math.max(0, Math.min(minutesTotal / 180, 1));
+        var xgi90 = (1 - w) * (Number.isFinite(baseXgi90) ? baseXgi90 : 0) + w * rolling;
+      } else {
+        var xgi90 = Number.isFinite(baseXgi90) ? baseXgi90 : 0;
+      }
 
       // Exclude clearly invalid numerical rows (NaN or negative price)
       if (Number.isNaN(id) || price <= 0 || Number.isNaN(xgi90)) return null;
