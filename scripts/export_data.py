@@ -100,13 +100,12 @@ def calculate_discrete_gameweek_stats():
         
         current_df = pd.read_csv(current_stats_path)
         
-        # Handle GW1 (baseline)
         if i == 0:
             logger.info(f"Processing baseline: {gw_dir}...")
             final_cols = ID_COLS + SNAPSHOT_COLS + CUMULATIVE_COLS
             existing_cols = [col for col in final_cols if col in current_df.columns]
             output_df = current_df[existing_cols]
-        else: # Handle GW2 onwards
+        else:
             prev_gw_dir = gameweek_dirs[i-1]
             logger.info(f"Processing {gw_dir} (comparing with {prev_gw_dir})...")
             prev_stats_path = os.path.join(by_gameweek_path, prev_gw_dir, 'playerstats.csv')
@@ -162,7 +161,6 @@ def calculate_discrete_gameweek_stats():
                 existing_cols = [col for col in final_cols if col in current_df.columns]
                 output_df = current_df[existing_cols]
             else:
-                # IMPORTANT: Previous stats are always sourced from the main 'By Gameweek' folder
                 prev_stats_path = os.path.join(by_gameweek_path, f'GW{gw_num - 1}', 'playerstats.csv')
                 if not os.path.exists(prev_stats_path):
                     logger.warning(f"  > {tournament_name}/{gw_dir}: Baseline stats from GW{gw_num - 1} not found. Skipping.")
@@ -186,7 +184,10 @@ def calculate_discrete_gameweek_stats():
 
 
 def main():
-    """Runs the full, corrected data export pipeline."""
+    """
+    Runs the full, corrected data export pipeline with nuanced historical locking
+    based on the 'finished' status of a gameweek.
+    """
     logger.info(f"--- Starting Comprehensive Data Update for Season {SEASON} ---")
     logger.info(f"Timestamp: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
 
@@ -220,7 +221,7 @@ def main():
     final_match_count = len(matches_df)
     logger.info(f"  > Removed {initial_match_count - final_match_count} matches. Processing {final_match_count} relevant matches.")
 
-    # --- 1. Update Master Data Files ---
+    # --- 1. Update Master Data Files (These are always the latest) ---
     logger.info("\n--- 1. Updating Master Data Files ---")
     os.makedirs(BASE_DATA_PATH, exist_ok=True)
     gameweeks_df.to_csv(os.path.join(BASE_DATA_PATH, 'gameweek_summaries.csv'), index=False)
@@ -228,6 +229,33 @@ def main():
     playerstats_df.to_csv(os.path.join(BASE_DATA_PATH, 'playerstats.csv'), index=False)
     teams_df.to_csv(os.path.join(BASE_DATA_PATH, 'teams.csv'), index=False)
     logger.info("  > Master files updated successfully.")
+
+
+    # Helper function to handle the nuanced file writing logic
+    def write_gameweek_files(gw_path, gw, is_finished, gw_dfs):
+        os.makedirs(gw_path, exist_ok=True)
+        
+        gw_matches, gw_playermatchstats, gw_playerstats = gw_dfs
+
+        # Always write the dynamic data files
+        gw_matches.to_csv(os.path.join(gw_path, 'matches.csv'), index=False)
+        gw_playermatchstats.to_csv(os.path.join(gw_path, 'playermatchstats.csv'), index=False)
+        gw_matches.to_csv(os.path.join(gw_path, 'fixtures.csv'), index=False)
+        gw_playerstats.to_csv(os.path.join(gw_path, 'playerstats.csv'), index=False)
+
+        players_path = os.path.join(gw_path, 'players.csv')
+        teams_path = os.path.join(gw_path, 'teams.csv')
+
+        if is_finished and os.path.exists(players_path) and os.path.exists(teams_path):
+            logger.info(f"  > Snapshot for finished GW{gw} is locked. Dynamic data updated.")
+        else:
+            if not is_finished:
+                logger.info(f"  > Updating all files for open GW{gw}...")
+            else:
+                 logger.info(f"  > Writing final historical snapshot for newly finished GW{gw}...")
+            players_df.to_csv(players_path, index=False)
+            teams_df.to_csv(teams_path, index=False)
+
 
     # --- 2. Populate 'By Tournament' Folders ---
     logger.info("\n--- 2. Populating 'By Tournament' Folders ---")
@@ -241,21 +269,17 @@ def main():
 
         for gw in gws_in_tournament:
             if gw not in gameweeks_df['id'].values: continue
-            is_finished = gameweeks_df.loc[gameweeks_df['id'] == gw, 'finished'].iloc[0]
             
+            is_finished = gameweeks_df.loc[gameweeks_df['id'] == gw, 'finished'].iloc[0]
             tournament_gw_path = os.path.join(BASE_DATA_PATH, 'By Tournament', folder_name, f'GW{gw}')
-            os.makedirs(tournament_gw_path, exist_ok=True)
             
             gw_tournament_matches = tournament_matches[tournament_matches['gameweek'] == gw]
             match_ids = gw_tournament_matches['match_id'].unique().tolist()
             gw_tournament_playerstats = playermatchstats_df[playermatchstats_df['match_id'].isin(match_ids)]
+            gw_tournament_playerstats_slice = playerstats_df[playerstats_df['gw'] == gw]
             
-            gw_tournament_matches.to_csv(os.path.join(tournament_gw_path, 'matches.csv'), index=False)
-            gw_tournament_playerstats.to_csv(os.path.join(tournament_gw_path, 'playermatchstats.csv'), index=False)
-            gw_tournament_matches.to_csv(os.path.join(tournament_gw_path, 'fixtures.csv'), index=False)
-            players_df.to_csv(os.path.join(tournament_gw_path, 'players.csv'), index=False)
-            teams_df.to_csv(os.path.join(tournament_gw_path, 'teams.csv'), index=False)
-            playerstats_df[playerstats_df['gw'] == gw].to_csv(os.path.join(tournament_gw_path, 'playerstats.csv'), index=False)
+            write_gameweek_files(tournament_gw_path, gw, is_finished, (gw_tournament_matches, gw_tournament_playerstats, gw_tournament_playerstats_slice))
+
 
     # --- 3. Populate 'By Gameweek' Folders ---
     logger.info("\n--- 3. Populating 'By Gameweek' Folders ---")
@@ -264,25 +288,21 @@ def main():
     for gw in unique_gameweeks:
         if gw not in gameweeks_df['id'].values: continue
         
+        is_finished = gameweeks_df.loc[gameweeks_df['id'] == gw, 'finished'].iloc[0]
         gw_path = os.path.join(BASE_DATA_PATH, 'By Gameweek', f'GW{gw}')
-        os.makedirs(gw_path, exist_ok=True)
         
         gw_matches = matches_df[matches_df['gameweek'] == gw]
         match_ids = gw_matches['match_id'].unique().tolist()
         gw_playermatchstats = playermatchstats_df[playermatchstats_df['match_id'].isin(match_ids)]
-        
-        gw_matches.to_csv(os.path.join(gw_path, 'matches.csv'), index=False)
-        gw_playermatchstats.to_csv(os.path.join(gw_path, 'playermatchstats.csv'), index=False)
-        gw_matches.to_csv(os.path.join(gw_path, 'fixtures.csv'), index=False)
-        players_df.to_csv(os.path.join(gw_path, 'players.csv'), index=False)
-        teams_df.to_csv(os.path.join(gw_path, 'teams.csv'), index=False)
-        playerstats_df[playerstats_df['gw'] == gw].to_csv(os.path.join(gw_path, 'playerstats.csv'), index=False)
-        logger.info(f"Populated data for GW{gw}.")
+        gw_playerstats_slice = playerstats_df[playerstats_df['gw'] == gw]
+
+        write_gameweek_files(gw_path, gw, is_finished, (gw_matches, gw_playermatchstats, gw_playerstats_slice))
 
     # --- 4. Perform the discrete gameweek calculation ---
     calculate_discrete_gameweek_stats()
 
     logger.info("\n--- Comprehensive data update process completed successfully! ---")
+
 
 if __name__ == "__main__":
     main()
