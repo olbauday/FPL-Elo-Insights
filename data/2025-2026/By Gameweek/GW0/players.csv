@@ -1,6 +1,7 @@
 player_code,player_id,first_name,second_name,web_name,team_code,position
 500040,662,Cristhian,Mosquera,Mosquera,3,Defender
 224117,666,Viktor,Gyökeres,Gyökeres,3,Forward
+67089,470,Martin,Dúbravka,Dúbravka,90,Goalkeeper
 503714,676,Lesley,Ugochukwu,Ugochukwu,90,Midfielder
 440323,680,Armando,Broja,Broja,90,Forward
 69752,66,Norberto,Murara Neto,Neto,91,Goalkeeper
@@ -200,8 +201,8 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 474907,298,Reece,Welch,Welch,11,Defender
 440993,299,Iliman,Ndiaye,Ndiaye,11,Midfielder
 433154,300,Dwight,McNeil,McNeil,11,Midfielder
-502697,301,Carlos,Alcaraz Durán,Alcaraz,11,Midfielder
 469272,210,Loum,Tchaouna,Tchaouna,90,Midfielder
+502697,301,Carlos,Alcaraz Durán,Alcaraz,11,Midfielder
 80801,302,Idrissa Gana,Gueye,Gana,11,Midfielder
 232928,303,James,Garner,Garner,11,Midfielder
 490094,304,Tim,Iroegbunam,Iroegbunam,11,Midfielder
@@ -303,8 +304,8 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 447203,397,Darwin,Núñez Ribeiro,Darwin,14,Forward
 500058,398,Jayden,Danns,Danns,14,Forward
 510663,661,Hugo,Ekitiké,Ekitiké,14,Forward
-432720,182,James,Trafford,Trafford,43,Goalkeeper
 465527,207,Hannibal,Mejbri,Hannibal,90,Midfielder
+432720,182,James,Trafford,Trafford,43,Goalkeeper
 121160,399,Ederson,Santana de Moraes,Ederson M.,43,Goalkeeper
 88248,400,Stefan,Ortega Moreno,Ortega Moreno,43,Goalkeeper
 122074,401,Marcus,Bettinelli,Bettinelli,43,Goalkeeper
@@ -317,7 +318,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 97299,409,John,Stones,Stones,43,Defender
 477064,410,Rico,Lewis,Lewis,43,Defender
 472769,411,Nico,O'Reilly,O’Reilly,43,Defender
-438234,413,Omar,Marmoush,Marmoush,43,Midfielder
+616222,412,Vitor,de Oliveira Nunes dos Reis,Vitor Reis,43,Defender
 209244,414,Phil,Foden,Foden,43,Midfielder
 510281,415,Sávio,Moreira de Oliveira,Savinho,43,Midfielder
 165809,416,Bernardo,Mota Veiga de Carvalho e Silva,Bernardo,43,Midfielder
@@ -403,15 +404,14 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 461484,498,Joe,White,White,4,Midfielder
 219168,499,Alexander,Isak,Isak,4,Forward
 538207,500,William,Osula,Osula,4,Forward
-225321,674,Aaron,Ramsdale,Ramsdale,4,Goalkeeper
 485337,677,Evann,Guessand,Guessand,7,Midfielder
 180804,198,Axel,Tuanzebe,Tuanzebe,90,Defender
 444180,200,Jaidon,Anthony,Anthony,90,Midfielder
 179458,202,Jacob,Bruun Larsen,Bruun Larsen,90,Midfielder
 174592,206,Marcus,Edwards,Edwards,90,Midfielder
 447715,211,Aaron,Ramsey,A.Ramsey,90,Midfielder
-67089,470,Martin,Dúbravka,Dúbravka,90,Goalkeeper
 599303,501,Sean,Neave,Neave,4,Forward
+225321,674,Aaron,Ramsdale,Ramsdale,4,Goalkeeper
 465642,684,Malick,Thiaw,Thiaw,4,Defender
 227444,505,Nikola,Milenković,Milenković,17,Defender
 575476,506,Murillo,Costa dos Santos,Murillo,17,Defender
@@ -420,6 +420,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 204822,512,Omar,Richards,O.Richards,17,Defender
 209046,516,Callum,Hudson-Odoi,Hudson-Odoi,17,Midfielder
 510500,518,João Pedro,Ferreira da Silva,Jota,17,Midfielder
+250199,519,Nicolás,Domínguez,Dominguez,17,Midfielder
 243345,520,Lewis,O'Brien,O'Brien,17,Midfielder
 210462,521,Ibrahim,Sangaré,Sangaré,17,Midfielder
 204968,522,Ryan,Yates,Yates,17,Midfielder
@@ -597,7 +598,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 428971,315,Steven,Benda,Benda,54,Goalkeeper
 492777,375,Conor,Bradley,Bradley,14,Defender
 126184,405,Nathan,Aké,Aké,43,Defender
-616222,412,Vitor,de Oliveira Nunes dos Reis,Vitor Reis,43,Defender
+438234,413,Omar,Marmoush,Marmoush,43,Midfielder
 547719,497,Lewis,Miley,L.Miley,4,Midfielder
 85633,502,Matz,Sels,Sels,17,Goalkeeper
 475123,503,Carlos Miguel,dos Santos Pereira,C.Miguel,17,Goalkeeper
@@ -609,7 +610,6 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 90585,514,Willy,Boly,Boly,17,Defender
 222531,515,Morgan,Gibbs-White,Gibbs-White,17,Midfielder
 215379,517,Elliot,Anderson,Anderson,17,Midfielder
-250199,519,Nicolás,Domínguez,Dominguez,17,Midfielder
 221632,569,Cristian,Romero,Romero,6,Defender
 135720,570,Kevin,Danso,Danso,6,Defender
 115556,571,Ben,Davies,Davies,6,Defender
