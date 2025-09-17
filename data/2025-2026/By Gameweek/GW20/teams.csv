@@ -5,6 +5,8 @@ code,id,name,short_name,strength,strength_overall_home,strength_overall_away,str
 91,4,Bournemouth,BOU,3,1150,1180,1100,1160,1200,1200,127,1827,AFC Bournemouth
 94,5,Brentford,BRE,3,1120,1185,1080,1080,1160,1290,130,1801,Brentford
 36,6,Brighton,BHA,3,1150,1175,1090,1140,1210,1210,131,1819,Brighton & Hove Albion
+21,19,West Ham,WHU,3,1100,1100,1100,1100,1100,1100,25,1728,West Ham United
+39,20,Wolves,WOL,3,1100,1125,1080,1100,1120,1150,38,1714,Wolverhampton Wanderers
 8,7,Chelsea,CHE,4,1185,1245,1150,1190,1220,1300,4,1915,Chelsea
 31,8,Crystal Palace,CRY,3,1140,1160,1120,1130,1160,1190,6,1849,Crystal Palace
 11,9,Everton,EVE,3,1100,1115,1140,1140,1060,1090,7,1806,Everton
@@ -17,5 +19,3 @@ code,id,name,short_name,strength,strength_overall_home,strength_overall_away,str
 17,16,Nott'm Forest,NFO,3,1165,1205,1150,1230,1180,1180,15,1792,Nottingham Forest
 56,17,Sunderland,SUN,2,1050,1050,1050,1050,1050,1050,29,1585,Sunderland
 6,18,Spurs,TOT,3,1130,1175,1100,1100,1160,1250,21,1812,Tottenham Hotspur
-21,19,West Ham,WHU,3,1100,1100,1100,1100,1100,1100,25,1728,West Ham United
-39,20,Wolves,WOL,3,1100,1125,1080,1100,1120,1150,38,1714,Wolverhampton Wanderers
