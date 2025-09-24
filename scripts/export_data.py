@@ -18,7 +18,7 @@ TOURNAMENT_NAME_MAP = {
     'community-shield': 'Community Shield',
     'uefa-super-cup': 'Uefa Super Cup',
     'efl-cup' : 'EFL Cup',
-    'champions-league': 'Champions League'.
+    'champions-league': 'Champions League',
     'europa-league': 'Europa League'
 }
 
