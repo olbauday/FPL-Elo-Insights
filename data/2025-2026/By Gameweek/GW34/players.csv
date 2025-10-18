@@ -235,6 +235,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 487117,179,Evan,Ferguson,Ferguson,36,Forward
 608181,180,Stefanos,Tzimas,Tzimas,36,Forward
 647850,181,Charalampos,Kostoulas,Kostoulas,36,Forward
+556637,744,Nehemiah,Oriola,Oriola,36,Midfielder
 536916,168,Facundo,Buonanotte,Buonanotte,8,Midfielder
 215059,220,Robert,Lynch Sánchez,Sánchez,8,Goalkeeper
 508479,221,Filip,Jörgensen,Jörgensen,8,Goalkeeper
@@ -295,8 +296,8 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 450535,277,Malcolm,Ebiowei,Ebiowei,31,Midfielder
 450542,278,Jesurun,Rak-Sakyi,J.Rak-Sakyi,31,Midfielder
 536694,279,Matheus,França de Oliveira,M.França,31,Midfielder
-531989,280,David,Ozoh,Ozoh,31,Midfielder
 550615,243,Tyrique,George,George,8,Midfielder
+531989,280,David,Ozoh,Ozoh,31,Midfielder
 530318,281,Kaden,Rodney,Rodney,31,Midfielder
 574398,282,Franco,Umeh-Chibueze,Umeh,31,Midfielder
 231747,283,Jean-Philippe,Mateta,Mateta,31,Forward
@@ -397,7 +398,6 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 155503,369,Freddie,Woodman,Woodman,14,Goalkeeper
 216094,370,Jeremie,Frimpong,Frimpong,14,Defender
 544877,371,Milos,Kerkez,Kerkez,14,Defender
-122798,372,Andrew,Robertson,Robertson,14,Defender
 496208,391,Ben,Gannon-Doak,Gannon-Doak,91,Midfielder
 609873,305,Harrison,Armstrong,Armstrong,11,Midfielder
 428971,315,Steven,Benda,Benda,54,Goalkeeper
@@ -412,6 +412,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 97846,340,Alex,Cairns,Cairns,2,Goalkeeper
 427637,350,Brenden,Aaronson,Aaronson,2,Midfielder
 116535,366,Alisson,Becker,A.Becker,14,Goalkeeper
+122798,372,Andrew,Robertson,Robertson,14,Defender
 97032,373,Virgil,van Dijk,Virgil,14,Defender
 204716,374,Ibrahima,Konaté,Konaté,14,Defender
 171287,376,Joe,Gomez,Gomez,14,Defender
@@ -483,7 +484,6 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 61256,457,Carlos Henrique,Casimiro,Casemiro,1,Midfielder
 490881,460,Toby,Collyer,Collyer,1,Midfielder
 556639,461,Jayce,Fitzgerald,Fitzgerald,1,Midfielder
-559684,464,Jack,Moorhouse,Moorhouse,1,Midfielder
 492777,375,Conor,Bradley,Bradley,14,Defender
 126184,405,Nathan,Aké,Aké,43,Defender
 171314,408,Rúben,dos Santos Gato Alves Dias,Rúben,43,Defender
@@ -508,6 +508,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 232112,459,Manuel,Ugarte Ribeiro,Ugarte,1,Midfielder
 547037,462,Jack,Fletcher,J.Fletcher,1,Midfielder
 618873,463,Sékou,Koné,Kone,1,Midfielder
+559684,464,Jack,Moorhouse,Moorhouse,1,Midfielder
 497894,465,Rasmus,Højlund,Højlund,1,Forward
 458249,466,Joshua,Zirkzee,Zirkzee,1,Forward
 596047,467,Chido,Obi,Obi,1,Forward
@@ -555,7 +556,6 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 209046,516,Callum,Hudson-Odoi,Hudson-Odoi,17,Midfielder
 510500,518,João Pedro,Ferreira da Silva,Jota,17,Midfielder
 243345,520,Lewis,O'Brien,O'Brien,17,Midfielder
-210156,527,Taiwo,Awoniyi,Awoniyi,17,Forward
 499309,252,Marc,Guiu Paz,Marc Guiu,8,Forward
 547719,497,Lewis,Miley,L.Miley,4,Midfielder
 432714,426,James,McAtee,McAtee,17,Midfielder
@@ -579,6 +579,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 495161,524,Marko,Stamenić,Stamenic,17,Midfielder
 60689,525,Chris,Wood,Wood,17,Forward
 482973,526,Igor Jesus,Maciel da Cruz,Igor Jesus,17,Forward
+210156,527,Taiwo,Awoniyi,Awoniyi,17,Forward
 456512,669,Dan,Ndoye,Ndoye,17,Midfielder
 107265,675,Angus,Gunn,Gunn,17,Goalkeeper
 503301,693,Omari,Hutchinson,Hutchinson,17,Midfielder
@@ -604,8 +605,8 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 434399,541,Reinildo,Mandava,Reinildo,56,Defender
 519634,542,Jenson,Seelt,Seelt,56,Defender
 535818,543,Simon,Adingra,Adingra,56,Midfielder
-547027,544,Habib,Diarra,Diarra,56,Midfielder
 138001,630,Tom,King,King,11,Goalkeeper
+547027,544,Habib,Diarra,Diarra,56,Midfielder
 124165,545,Patrick,Roberts,Roberts,56,Midfielder
 626844,546,Milan,Aleksić,Aleksić,56,Midfielder
 484420,547,Enzo,Le Fée,E.Le Fée,56,Midfielder
