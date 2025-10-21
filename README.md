@@ -1,11 +1,22 @@
 # FPL-Elo-Insights: A Comprehensive FPL Dataset
 
-Welcome to FPL-Elo-Insights, a meticulously curated dataset designed to empower your Fantasy Premier League analysis beyond the surface. This project uniquely links official FPL player data with detailed match statistics and historical team Elo ratings, allowing for unparalleled insights.
+Welcome to **FPL-Elo-Insights**, a meticulously curated dataset designed to empower your Fantasy Premier League analysis beyond the surface.  
+This project uniquely links official FPL player data with detailed match statistics and historical team Elo ratings, allowing for **unparalleled insights into player and team performance.**
 
 It combines three powerful data sources:
-1.  **Official FPL API Data**: All the essential player points, costs, form, ownership, xG/xA, and more.
-2.  **Manually Curated Match Stats (Opta-like)**: Deep-dive performance metrics for every player and match.
-3.  **ClubElo.com Elo Ratings**: Historical and current team strength ratings for robust fixture analysis.
+1.  **Official FPL API Data** – Player points, costs, form, ownership, xG/xA, and more.
+2.  **Manually Curated Match Stats (Opta-like)** – Deep-dive performance metrics for every player and match.
+3.  **ClubElo.com Elo Ratings** – Historical and current team strength ratings for robust fixture analysis.
+
+---
+
+## 💬 Join the Community
+
+We’ve just launched the official **FPL-Elo-Insights Discord** — a place where data enthusiasts and football fans collide.
+
+Whether you’re building FPL tools, exploring stats, or just talking football, you’ll find a home here.
+
+**👉 [Join the Discord](https://discord.gg/RmySPr669k)**
 
 ## Data Updates
 
