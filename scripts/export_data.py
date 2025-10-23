@@ -129,8 +129,10 @@ def calculate_discrete_gameweek_stats():
                 continue
 
             prev_df = pd.read_csv(prev_stats_path)
-            merged_df = pd.merge(current_df, prev_df[ID_COLS + CUMULATIVE_COLS], on='id', how='left', suffixes=('', '_prev'))
-            
+            # Only use columns that exist in previous dataframe
+            prev_cols_to_merge = [col for col in ID_COLS + CUMULATIVE_COLS if col in prev_df.columns]
+            merged_df = pd.merge(current_df, prev_df[prev_cols_to_merge], on='id', how='left', suffixes=('', '_prev'))
+
             for col in CUMULATIVE_COLS:
                 if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                     merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
@@ -181,8 +183,10 @@ def calculate_discrete_gameweek_stats():
                     continue
                 
                 prev_df = pd.read_csv(prev_stats_path)
-                merged_df = pd.merge(current_df, prev_df[ID_COLS + CUMULATIVE_COLS], on='id', how='left', suffixes=('', '_prev'))
-                
+                # Only use columns that exist in previous dataframe
+                prev_cols_to_merge = [col for col in ID_COLS + CUMULATIVE_COLS if col in prev_df.columns]
+                merged_df = pd.merge(current_df, prev_df[prev_cols_to_merge], on='id', how='left', suffixes=('', '_prev'))
+
                 for col in CUMULATIVE_COLS:
                     if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                         merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
