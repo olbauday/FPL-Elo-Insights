@@ -54,6 +54,31 @@ SNAPSHOT_COLS = [
     'goals_conceded_per_90', 'starts_per_90', 'defensive_contribution_per_90', 'gw'
 ]
 
+# --- Master playerstats schema - all 87 columns in proper order ---
+PLAYERSTATS_COLUMNS = [
+    'id', 'status', 'chance_of_playing_next_round', 'chance_of_playing_this_round',
+    'now_cost', 'now_cost_rank', 'now_cost_rank_type', 'cost_change_event',
+    'cost_change_event_fall', 'cost_change_start', 'cost_change_start_fall',
+    'selected_by_percent', 'selected_rank', 'selected_rank_type', 'total_points',
+    'event_points', 'points_per_game', 'points_per_game_rank', 'points_per_game_rank_type',
+    'bonus', 'bps', 'form', 'form_rank', 'form_rank_type', 'value_form', 'value_season',
+    'dreamteam_count', 'transfers_in', 'transfers_in_event', 'transfers_out',
+    'transfers_out_event', 'ep_next', 'ep_this', 'expected_goals', 'expected_assists',
+    'expected_goal_involvements', 'expected_goals_conceded', 'expected_goals_per_90',
+    'expected_assists_per_90', 'expected_goal_involvements_per_90',
+    'expected_goals_conceded_per_90', 'influence', 'influence_rank', 'influence_rank_type',
+    'creativity', 'creativity_rank', 'creativity_rank_type', 'threat', 'threat_rank',
+    'threat_rank_type', 'ict_index', 'ict_index_rank', 'ict_index_rank_type',
+    'corners_and_indirect_freekicks_order', 'direct_freekicks_order', 'penalties_order',
+    'gw', 'set_piece_threat', 'first_name', 'second_name', 'web_name', 'news',
+    'news_added', 'minutes', 'goals_scored', 'assists', 'clean_sheets', 'goals_conceded',
+    'own_goals', 'penalties_saved', 'penalties_missed', 'yellow_cards', 'red_cards',
+    'saves', 'starts', 'defensive_contribution', 'corners_and_indirect_freekicks_text',
+    'direct_freekicks_text', 'penalties_text', 'saves_per_90', 'clean_sheets_per_90',
+    'goals_conceded_per_90', 'starts_per_90', 'defensive_contribution_per_90', 'tackles',
+    'clearances_blocks_interceptions', 'recoveries'
+]
+
 
 def initialize_supabase_client() -> Client:
     """Initializes and returns a Supabase client."""
@@ -63,6 +88,13 @@ def initialize_supabase_client() -> Client:
         logger.error("❌ Error: SUPABASE_URL and SUPABASE_KEY must be set.")
         sys.exit(1)
     return create_client(supabase_url, supabase_key)
+
+def ensure_playerstats_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Ensures dataframe has all playerstats columns in correct order, adding missing ones as NaN."""
+    for col in PLAYERSTATS_COLUMNS:
+        if col not in df.columns:
+            df[col] = pd.NA
+    return df[PLAYERSTATS_COLUMNS]
 
 def fetch_all_rows(supabase: Client, table_name: str) -> pd.DataFrame:
     """Fetches all rows from a Supabase table, handling pagination."""
@@ -136,7 +168,11 @@ def calculate_discrete_gameweek_stats():
             for col in CUMULATIVE_COLS:
                 if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                     merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
-                    merged_df[col] = merged_df[col] - merged_df[f"{col}_prev"]
+                    # Calculate the difference
+                    diff = merged_df[col] - merged_df[f"{col}_prev"]
+                    # If difference is negative, use current value as-is (data quality issue)
+                    # Otherwise use the calculated difference
+                    merged_df[col] = diff.where(diff >= 0, merged_df[col])
             
             final_cols = ID_COLS + SNAPSHOT_COLS + CUMULATIVE_COLS
             existing_final_cols = [col for col in final_cols if col in merged_df.columns]
@@ -190,7 +226,11 @@ def calculate_discrete_gameweek_stats():
                 for col in CUMULATIVE_COLS:
                     if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                         merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
-                        merged_df[col] = merged_df[col] - merged_df[f"{col}_prev"]
+                        # Calculate the difference
+                        diff = merged_df[col] - merged_df[f"{col}_prev"]
+                        # If difference is negative, use current value as-is (data quality issue)
+                        # Otherwise use the calculated difference
+                        merged_df[col] = diff.where(diff >= 0, merged_df[col])
 
                 final_cols = ID_COLS + SNAPSHOT_COLS + CUMULATIVE_COLS
                 existing_final_cols = [col for col in final_cols if col in merged_df.columns]
@@ -244,7 +284,9 @@ def main():
     os.makedirs(BASE_DATA_PATH, exist_ok=True)
     gameweeks_df.to_csv(os.path.join(BASE_DATA_PATH, 'gameweek_summaries.csv'), index=False)
     players_df.to_csv(os.path.join(BASE_DATA_PATH, 'players.csv'), index=False)
-    playerstats_df.to_csv(os.path.join(BASE_DATA_PATH, 'playerstats.csv'), index=False)
+    # Ensure playerstats has all columns in consistent order
+    playerstats_normalized = ensure_playerstats_columns(playerstats_df)
+    playerstats_normalized.to_csv(os.path.join(BASE_DATA_PATH, 'playerstats.csv'), index=False)
     teams_df.to_csv(os.path.join(BASE_DATA_PATH, 'teams.csv'), index=False)
     logger.info("  > Master files updated successfully.")
 
@@ -252,14 +294,16 @@ def main():
     # Helper function to handle the nuanced file writing logic
     def write_gameweek_files(gw_path, gw, is_finished, gw_dfs):
         os.makedirs(gw_path, exist_ok=True)
-        
+
         gw_matches, gw_playermatchstats, gw_playerstats = gw_dfs
 
         # Always write the dynamic data files
         gw_matches.to_csv(os.path.join(gw_path, 'matches.csv'), index=False)
         gw_playermatchstats.to_csv(os.path.join(gw_path, 'playermatchstats.csv'), index=False)
         gw_matches.to_csv(os.path.join(gw_path, 'fixtures.csv'), index=False)
-        gw_playerstats.to_csv(os.path.join(gw_path, 'playerstats.csv'), index=False)
+        # Ensure playerstats has all columns in consistent order
+        gw_playerstats_normalized = ensure_playerstats_columns(gw_playerstats)
+        gw_playerstats_normalized.to_csv(os.path.join(gw_path, 'playerstats.csv'), index=False)
 
         players_path = os.path.join(gw_path, 'players.csv')
         teams_path = os.path.join(gw_path, 'teams.csv')
