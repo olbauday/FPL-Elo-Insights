@@ -168,7 +168,11 @@ def calculate_discrete_gameweek_stats():
             for col in CUMULATIVE_COLS:
                 if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                     merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
-                    merged_df[col] = merged_df[col] - merged_df[f"{col}_prev"]
+                    # Calculate the difference
+                    diff = merged_df[col] - merged_df[f"{col}_prev"]
+                    # If difference is negative, use current value as-is (data quality issue)
+                    # Otherwise use the calculated difference
+                    merged_df[col] = diff.where(diff >= 0, merged_df[col])
             
             final_cols = ID_COLS + SNAPSHOT_COLS + CUMULATIVE_COLS
             existing_final_cols = [col for col in final_cols if col in merged_df.columns]
@@ -222,7 +226,11 @@ def calculate_discrete_gameweek_stats():
                 for col in CUMULATIVE_COLS:
                     if col in merged_df.columns and f"{col}_prev" in merged_df.columns:
                         merged_df[f"{col}_prev"] = merged_df[f"{col}_prev"].fillna(0)
-                        merged_df[col] = merged_df[col] - merged_df[f"{col}_prev"]
+                        # Calculate the difference
+                        diff = merged_df[col] - merged_df[f"{col}_prev"]
+                        # If difference is negative, use current value as-is (data quality issue)
+                        # Otherwise use the calculated difference
+                        merged_df[col] = diff.where(diff >= 0, merged_df[col])
 
                 final_cols = ID_COLS + SNAPSHOT_COLS + CUMULATIVE_COLS
                 existing_final_cols = [col for col in final_cols if col in merged_df.columns]
