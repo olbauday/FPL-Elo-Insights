@@ -79,6 +79,23 @@ PLAYERSTATS_COLUMNS = [
     'clearances_blocks_interceptions', 'recoveries'
 ]
 
+# --- Master playermatchstats schema - all 64 columns in proper order ---
+PLAYERMATCHSTATS_COLUMNS = [
+    'player_id', 'match_id', 'minutes_played', 'goals', 'assists', 'total_shots', 'xg', 'xa',
+    'shots_on_target', 'successful_dribbles', 'big_chances_missed', 'touches_opposition_box',
+    'touches', 'accurate_passes', 'accurate_passes_percent', 'chances_created',
+    'final_third_passes', 'accurate_crosses', 'accurate_crosses_percent', 'accurate_long_balls',
+    'accurate_long_balls_percent', 'tackles_won', 'interceptions', 'recoveries', 'blocks',
+    'clearances', 'headed_clearances', 'dribbled_past', 'duels_won', 'duels_lost',
+    'ground_duels_won', 'ground_duels_won_percent', 'aerial_duels_won', 'aerial_duels_won_percent',
+    'was_fouled', 'fouls_committed', 'saves', 'goals_conceded', 'xgot_faced', 'goals_prevented',
+    'sweeper_actions', 'gk_accurate_passes', 'gk_accurate_long_balls', 'dispossessed',
+    'high_claim', 'corners', 'saves_inside_box', 'offsides', 'successful_dribbles_percent',
+    'tackles_won_percent', 'xgot', 'tackles', 'start_min', 'finish_min', 'team_goals_conceded',
+    'penalties_scored', 'penalties_missed', 'top_speed', 'distance_covered', 'walking_distance',
+    'running_distance', 'sprinting_distance', 'number_of_sprints', 'defensive_contributions'
+]
+
 
 def initialize_supabase_client() -> Client:
     """Initializes and returns a Supabase client."""
@@ -95,6 +112,13 @@ def ensure_playerstats_columns(df: pd.DataFrame) -> pd.DataFrame:
         if col not in df.columns:
             df[col] = pd.NA
     return df[PLAYERSTATS_COLUMNS]
+
+def ensure_playermatchstats_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Ensures dataframe has all playermatchstats columns in correct order, adding missing ones as NaN."""
+    for col in PLAYERMATCHSTATS_COLUMNS:
+        if col not in df.columns:
+            df[col] = pd.NA
+    return df[PLAYERMATCHSTATS_COLUMNS]
 
 def fetch_all_rows(supabase: Client, table_name: str) -> pd.DataFrame:
     """Fetches all rows from a Supabase table, handling pagination."""
@@ -299,7 +323,9 @@ def main():
 
         # Always write the dynamic data files
         gw_matches.to_csv(os.path.join(gw_path, 'matches.csv'), index=False)
-        gw_playermatchstats.to_csv(os.path.join(gw_path, 'playermatchstats.csv'), index=False)
+        # Ensure playermatchstats has all columns in consistent order
+        gw_playermatchstats_normalized = ensure_playermatchstats_columns(gw_playermatchstats)
+        gw_playermatchstats_normalized.to_csv(os.path.join(gw_path, 'playermatchstats.csv'), index=False)
         gw_matches.to_csv(os.path.join(gw_path, 'fixtures.csv'), index=False)
         # Ensure playerstats has all columns in consistent order
         gw_playerstats_normalized = ensure_playerstats_columns(gw_playerstats)
