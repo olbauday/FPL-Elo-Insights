@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen font-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-tennis-green hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-court-red hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95;
+  }
+
+  .card {
+    @apply bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6;
+  }
+
+  .input-field {
+    @apply bg-slate-700 border-2 border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:border-tennis-green focus:outline-none transition-colors;
+  }
+
+  .score-display {
+    @apply text-6xl font-bold font-mono text-tennis-green;
+  }
+
+  .game-score {
+    @apply text-3xl font-bold text-slate-300;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(52, 199, 89, 0.5);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 20px rgba(255, 59, 48, 0.5);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
+  }
+}

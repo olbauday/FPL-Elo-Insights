@@ -1,0 +1,29 @@
+{
+  "name": "football-tennis-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Football Knowledge Tennis game",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "migrate": "node database/migrate.js",
+    "seed": "node database/seeds/run.js"
+  },
+  "keywords": ["football", "trivia", "game", "fpl"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "openai": "^4.20.1",
+    "fuse.js": "^7.0.0",
+    "csv-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
