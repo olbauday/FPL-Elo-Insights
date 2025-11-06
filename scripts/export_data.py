@@ -19,7 +19,8 @@ TOURNAMENT_NAME_MAP = {
     'uefa-super-cup': 'Uefa Super Cup',
     'efl-cup' : 'EFL Cup',
     'champions-league': 'Champions League',
-    'europa-league': 'Europa League'
+    'europa-league': 'Europa League',
+    'conference-league' : 'Conference League'
 }
 
 # --- Logging Setup ---
