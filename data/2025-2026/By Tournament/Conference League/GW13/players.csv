@@ -355,7 +355,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 19236,753,John,Ruddy,Ruddy,4,Goalkeeper
 206325,12,Oleksandr,Zinchenko,Zinchenko,17,Defender
 549067,513,Zach,Abbott,Abbott,17,Defender
-222531,515,Morgan,Gibbs-White,Gibbs-White,17,Midfielder
+167512,539,Luke,O'Nien,O'Nien,56,Defender
 465702,540,Timothée,Pembélé,Pembele,56,Defender
 485337,677,Evann,Guessand,Guessand,7,Midfielder
 180804,198,Axel,Tuanzebe,Tuanzebe,90,Defender
@@ -572,6 +572,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 485047,511,Felipe,Rodrigues da Silva,Morato,17,Defender
 204822,512,Omar,Richards,O.Richards,17,Defender
 90585,514,Willy,Boly,Boly,17,Defender
+222531,515,Morgan,Gibbs-White,Gibbs-White,17,Midfielder
 209046,516,Callum,Hudson-Odoi,Hudson-Odoi,17,Midfielder
 215379,517,Elliot,Anderson,Anderson,17,Midfielder
 510500,518,João Pedro,Ferreira da Silva,Jota,17,Midfielder
@@ -604,7 +605,6 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 477547,536,Leo Fuhr,Hjelde,Hjelde,56,Defender
 492066,537,Niall,Huggins,Huggins,56,Defender
 514613,538,Zak,Johnson,Johnson,56,Defender
-167512,539,Luke,O'Nien,O'Nien,56,Defender
 138001,630,Tom,King,King,11,Goalkeeper
 434399,541,Reinildo,Mandava,Reinildo,56,Defender
 519634,542,Jenson,Seelt,Seelt,56,Defender
