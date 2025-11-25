@@ -320,6 +320,7 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 591357,134,Ryan,Trevitt,Trevitt,94,Midfielder
 502500,136,Igor Thiago,Nascimento Rodrigues,Thiago,94,Forward
 183656,748,Josh,Dasilva,Dasilva,94,Midfielder
+216646,135,Yoane,Wissa,Wissa,4,Forward
 98747,469,Nick,Pope,Pope,4,Goalkeeper
 81441,471,Mark,Gillespie,Gillespie,4,Goalkeeper
 111452,472,Odysseas,Vlachodimos,Odysseas,4,Goalkeeper
@@ -354,9 +355,9 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 623110,689,Seung-Soo,Park,Seung soo,4,Midfielder
 470313,714,Nick,Woltemade,Woltemade,4,Forward
 19236,753,John,Ruddy,Ruddy,4,Goalkeeper
-206325,12,Oleksandr,Zinchenko,Zinchenko,17,Defender
+492066,537,Niall,Huggins,Huggins,56,Defender
 514613,538,Zak,Johnson,Johnson,56,Defender
-167512,539,Luke,O'Nien,O'Nien,56,Defender
+488213,720,Tolu,Arokodare,Tolu,39,Forward
 485337,677,Evann,Guessand,Guessand,7,Midfielder
 180804,198,Axel,Tuanzebe,Tuanzebe,90,Defender
 444180,200,Jaidon,Anthony,Anthony,90,Midfielder
@@ -555,10 +556,11 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 575034,468,Ethan,Wheatley,Wheatley,1,Forward
 485711,681,Benjamin,Sesko,Šeško,1,Forward
 465247,733,Senne,Lammens,Lammens,1,Goalkeeper
+576628,755,Shea,Lacey,Lacey,1,Midfielder
 232653,52,Jacob,Ramsey,J.Ramsey,4,Midfielder
-216646,135,Yoane,Wissa,Wissa,4,Forward
 499309,252,Marc,Guiu Paz,Marc Guiu,8,Forward
 547719,497,Lewis,Miley,L.Miley,4,Midfielder
+206325,12,Oleksandr,Zinchenko,Zinchenko,17,Defender
 432714,426,James,McAtee,McAtee,17,Midfielder
 85633,502,Matz,Sels,Sels,17,Goalkeeper
 475123,503,Carlos Miguel,dos Santos Pereira,C.Miguel,17,Goalkeeper
@@ -604,8 +606,8 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 232820,534,Joe,Anderson,Anderson,56,Defender
 461195,535,Dennis,Cirkin,Cirkin,56,Defender
 477547,536,Leo Fuhr,Hjelde,Hjelde,56,Defender
-492066,537,Niall,Huggins,Huggins,56,Defender
 138001,630,Tom,King,King,11,Goalkeeper
+167512,539,Luke,O'Nien,O'Nien,56,Defender
 465702,540,Timothée,Pembélé,Pembele,56,Defender
 434399,541,Reinildo,Mandava,Reinildo,56,Defender
 519634,542,Jenson,Seelt,Seelt,56,Defender
@@ -751,5 +753,4 @@ player_code,player_id,first_name,second_name,web_name,team_code,position
 497949,682,David,Møller Wolfe,Møller Wolfe,39,Defender
 523705,695,Jackson,Tchatchoua,Tchatchoua,39,Defender
 431248,709,Ladislav,Krejcí,Krejčí,39,Defender
-488213,720,Tolu,Arokodare,Tolu,39,Forward
 647671,749,Mateus,Mané,Mané,39,Forward
