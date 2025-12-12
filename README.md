@@ -18,6 +18,17 @@ Whether you’re building FPL tools, exploring stats, or just talking football, 
 
 **👉 [Join the Discord](https://discord.gg/RmySPr669k)**
 
+## 💬 Join the League
+
+We’ve created an official **FPL Core** league for anyone using this data.
+
+It’s a simple way to:
+- Compare performance
+- See who’s actually extracting value from the insights
+- Have a bit of competitive fun along the way
+
+👉 **[Join the FPL Core League](https://fantasy.premierleague.com/leagues/auto-join/jxhhge)**
+
 ## Data Updates
 
 The dataset is automatically refreshed twice daily at:
